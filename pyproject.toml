@@ -1,0 +1,32 @@
+[project]
+name = "covid"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "FelipePassarela", email = "126916744+FelipePassarela@users.noreply.github.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "loguru>=0.7.3",
+    "matplotlib>=3.11.0",
+    "pandas>=3.0.3",
+    "pyyml>=0.0.2",
+    "scikit-learn>=1.9.0",
+    "tqdm>=4.68.3",
+    "typer>=0.26.7",
+    "umap-learn>=0.5.12",
+    "xgboost>=3.3.0",
+]
+
+[project.scripts]
+cli = "covid.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.0",
+]

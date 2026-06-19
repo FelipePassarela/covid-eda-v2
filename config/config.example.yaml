@@ -1,0 +1,16 @@
+dataset:
+  raw_path: data/raw/raw_dataset.csv
+  target_column: target
+  id_column: id
+  sparse_threshold: 0.1
+
+training:
+  test_size: 0.2
+  random_state: 42
+  n_folds: 3
+  shuffle: true
+  metrics:
+    - balanced_accuracy
+    - matthews
+    - accuracy
+    - f1
