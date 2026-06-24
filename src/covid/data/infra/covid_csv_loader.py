@@ -9,7 +9,7 @@ from ..domain.data_cleaning_config import DataCleaningConfig
 
 
 class CovidDatasetCSVLoader(CovidDatasetLoader):
-    def __init__(self, raw_path: Path):
+    def __init__(self, raw_path: Path) -> None:
         self._raw_path = raw_path
 
     def load_dataset(self, config: DataCleaningConfig) -> CovidDataset:
