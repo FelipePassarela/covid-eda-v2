@@ -5,6 +5,6 @@ from covid.training import TrainingConfig
 
 
 @dataclass(frozen=True)
-class AppConfig:
+class RunConfig:
     dataset: DatasetConfig
     train: TrainingConfig

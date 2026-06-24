@@ -2,13 +2,13 @@ from pathlib import Path
 
 import yaml
 
-from covid.app_config import AppConfig
 from covid.data import DatasetConfig
-from covid.training.training_config import TrainingConfig
+from covid.run_config import RunConfig
+from covid.training import TrainingConfig
 
 
-def from_yaml(path: Path) -> AppConfig:
-    return AppConfig(
+def from_yaml(path: Path) -> RunConfig:
+    return RunConfig(
         dataset=dataset_config_from_yaml(path),
         train=training_config_from_yaml(path),
     )

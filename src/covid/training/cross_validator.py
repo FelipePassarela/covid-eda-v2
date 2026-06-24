@@ -6,7 +6,9 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.pipeline import Pipeline, clone
 from tqdm import tqdm
 
-from covid.training.cv_result import CVResult
+from covid.training.cv_result import CVResults
+from covid.training.cv_tracker import CVTracker
+from covid.training.null_cv_tracker import NullCVTracker
 
 
 class CrossValidator:
@@ -16,6 +18,7 @@ class CrossValidator:
         metrics: dict[str, Callable],
         random_state: int | None,
         shuffle: bool,
+        cv_tracker: CVTracker = NullCVTracker(),
     ):
         self._n_folds = n_folds
         self._metrics = metrics
@@ -23,23 +26,19 @@ class CrossValidator:
         self._splitter = StratifiedKFold(
             n_splits=self._n_folds, shuffle=shuffle, random_state=self._random_state
         )
+        self._cv_tracker = cv_tracker
 
     def run(
         self, models: Mapping[str, Pipeline], X: pd.DataFrame, y: pd.Series
-    ) -> CVResult:
-        logger.info(
-            "Starting cross-validation with {n_folds} folds", n_folds=self._n_folds
-        )
-        metric_keys = list(self._metrics.keys())
-        logger.info("Metrics being evaluated: {metrics}", metrics=metric_keys)
-        logger.info("Models being evaluated: {models}", models=list(models.keys()))
-
-        result = CVResult()
+    ) -> CVResults:
+        self._perform_logs(models)
+        result = CVResults()
 
         total_steps = self._n_folds * len(models)
         with tqdm(total=total_steps, desc="Cross-validation") as pbar:
             self._run_cv(models, X, y, result, lambda: pbar.update(1))
 
+        self._cv_tracker.log_cv_results(result)
         return result
 
     def _run_cv(
@@ -47,7 +46,7 @@ class CrossValidator:
         models: Mapping[str, Pipeline],
         X: pd.DataFrame,
         y: pd.Series,
-        result: CVResult,
+        result: CVResults,
         on_model_evaluated: Callable | None = None,
     ) -> None:
         for fold_idx, (train_idx, test_idx) in enumerate(
@@ -72,3 +71,15 @@ class CrossValidator:
 
                 if on_model_evaluated:
                     on_model_evaluated()
+
+    def _perform_logs(self, models: Mapping[str, Pipeline]) -> None:
+        logger.info(
+            "Starting cross-validation with {n_folds} folds", n_folds=self._n_folds
+        )
+        metric_keys = list(self._metrics.keys())
+        logger.info("Metrics being evaluated: {metrics}", metrics=metric_keys)
+        logger.info("Models being evaluated: {models}", models=list(models.keys()))
+
+        for name, model in models.items():
+            params = model.get_params()
+            self._cv_tracker.log_model_params(model_name=name, params=params)

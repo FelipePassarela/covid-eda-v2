@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-class CVResult:
+class CVResults:
     def __init__(self) -> None:
         self._summary = {}
 
