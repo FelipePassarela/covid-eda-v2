@@ -1,10 +1,17 @@
+from typing import Sequence
+
 from loguru import logger
 
+from covid.cross_val import (
+    CrossValidator,
+    CVPlotter,
+    CVTracker,
+    NullCVTracker,
+)
 from covid.data import CovidDatasetLoader, CovidDatasetTracker, NullCovidDatasetTracker
 from covid.metric import METRIC_REGISTRY, MetricFactory
 from covid.pipeline import create_pipes
 from covid.run_config import RunConfig
-from covid.cross_val import CrossValidator, CVTracker, NullCVTracker
 
 
 def run_experiment(
@@ -12,6 +19,7 @@ def run_experiment(
     covid_dataset_loader: CovidDatasetLoader,
     dataset_tracker: CovidDatasetTracker = NullCovidDatasetTracker(),
     cv_tracker: CVTracker = NullCVTracker(),
+    cv_plotters: Sequence[CVPlotter] = [],
 ) -> None:
     dataset_tracker.log_data_path(run_config.raw_data_path)
     dataset_tracker.log_cleaning_config(run_config.cleaning)
@@ -32,6 +40,7 @@ def run_experiment(
         random_state=random_state,
         shuffle=run_config.train.shuffle,
         cv_tracker=cv_tracker,
+        cv_plotters=cv_plotters,
     )
     result = cv.run(pipes, X, y)
 

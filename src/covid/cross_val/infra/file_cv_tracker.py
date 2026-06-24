@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import yaml
+from matplotlib.figure import Figure
 
 from ..domain.cv_result import CVResults
 from ..domain.cv_tracker import CVTracker
@@ -20,3 +21,7 @@ class FileCVTracker(CVTracker):
         output_file = self._output_dir / f"{model_name}_params.yaml"
         with open(output_file, "w") as f:
             yaml.dump(params, f, default_flow_style=False)
+
+    def log_cv_plot(self, fig: Figure, filename: str = "plot.png") -> None:
+        output_file = self._output_dir / filename
+        fig.savefig(output_file)

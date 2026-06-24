@@ -1,4 +1,4 @@
-from typing import Callable, Mapping
+from typing import Callable, Mapping, Sequence
 
 import pandas as pd
 from loguru import logger
@@ -6,9 +6,10 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.pipeline import Pipeline, clone
 from tqdm import tqdm
 
-from covid.cross_val.domain.cv_result import CVResults
-from covid.cross_val.domain.cv_tracker import CVTracker
-from covid.cross_val.domain.null_cv_tracker import NullCVTracker
+from .cv_plotter import CVPlotter
+from .cv_result import CVResults
+from .cv_tracker import CVTracker
+from .null_cv_tracker import NullCVTracker
 
 
 class CrossValidator:
@@ -19,6 +20,7 @@ class CrossValidator:
         random_state: int | None,
         shuffle: bool,
         cv_tracker: CVTracker = NullCVTracker(),
+        cv_plotters: Sequence[CVPlotter] = [],
     ):
         self._n_folds = n_folds
         self._metrics = metrics
@@ -27,18 +29,19 @@ class CrossValidator:
             n_splits=self._n_folds, shuffle=shuffle, random_state=self._random_state
         )
         self._cv_tracker = cv_tracker
+        self._cv_plotter = cv_plotters
 
     def run(
         self, models: Mapping[str, Pipeline], X: pd.DataFrame, y: pd.Series
     ) -> CVResults:
-        self._perform_logs(models)
+        self._log_models(models)
         result = CVResults()
 
         total_steps = self._n_folds * len(models)
         with tqdm(total=total_steps, desc="Cross-validation") as pbar:
             self._run_cv(models, X, y, result, lambda: pbar.update(1))
 
-        self._cv_tracker.log_cv_results(result)
+        self._log_results(result)
         return result
 
     def _run_cv(
@@ -72,7 +75,7 @@ class CrossValidator:
                 if on_model_evaluated:
                     on_model_evaluated()
 
-    def _perform_logs(self, models: Mapping[str, Pipeline]) -> None:
+    def _log_models(self, models: Mapping[str, Pipeline]) -> None:
         logger.info(
             "Starting cross-validation with {n_folds} folds", n_folds=self._n_folds
         )
@@ -83,3 +86,10 @@ class CrossValidator:
         for name, model in models.items():
             params = model.get_params()
             self._cv_tracker.log_model_params(model_name=name, params=params)
+
+    def _log_results(self, result: CVResults) -> None:
+        for plotter in self._cv_plotter:
+            fig = plotter.plot_results(result)
+            fig_filename = plotter.figure_filename()
+            self._cv_tracker.log_cv_plot(fig, filename=fig_filename)
+        self._cv_tracker.log_cv_results(result)
