@@ -1,5 +1,5 @@
-from covid.training.cv_result import CVResults
-from covid.training.cv_tracker import CVTracker
+from covid.cross_val.domain.cv_result import CVResults
+from covid.cross_val.domain.cv_tracker import CVTracker
 
 
 class NullCVTracker(CVTracker):

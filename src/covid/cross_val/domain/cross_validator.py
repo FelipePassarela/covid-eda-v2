@@ -6,9 +6,9 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.pipeline import Pipeline, clone
 from tqdm import tqdm
 
-from covid.training.cv_result import CVResults
-from covid.training.cv_tracker import CVTracker
-from covid.training.null_cv_tracker import NullCVTracker
+from covid.cross_val.domain.cv_result import CVResults
+from covid.cross_val.domain.cv_tracker import CVTracker
+from covid.cross_val.domain.null_cv_tracker import NullCVTracker
 
 
 class CrossValidator:

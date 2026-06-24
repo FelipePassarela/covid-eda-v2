@@ -6,7 +6,7 @@ import typer
 from covid import config_loader
 from covid.data import CovidDatasetCSVLoader, FileCovidDatasetTracker
 from covid.experiment import run_experiment
-from covid.training import FileCVTracker
+from covid.cross_val import FileCVTracker
 
 app = typer.Typer()
 

@@ -2,8 +2,8 @@ from pathlib import Path
 
 import yaml
 
-from covid.training.cv_result import CVResults
-from covid.training.cv_tracker import CVTracker
+from ..domain.cv_result import CVResults
+from ..domain.cv_tracker import CVTracker
 
 
 class FileCVTracker(CVTracker):

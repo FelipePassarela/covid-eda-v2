@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from covid.data import DataCleaningConfig
-from covid.training import TrainingConfig
+from covid.cross_val import TrainingConfig
 
 
 @dataclass(frozen=True)

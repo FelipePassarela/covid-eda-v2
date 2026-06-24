@@ -4,7 +4,7 @@ import yaml
 
 from covid.data import DataCleaningConfig
 from covid.run_config import RunConfig
-from covid.training import TrainingConfig
+from covid.cross_val import TrainingConfig
 
 
 def from_yaml(path: Path) -> RunConfig:

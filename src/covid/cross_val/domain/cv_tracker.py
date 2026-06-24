@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from covid.training.cv_result import CVResults
+from .cv_result import CVResults
 
 
 class CVTracker(ABC):

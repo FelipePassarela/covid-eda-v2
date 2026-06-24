@@ -4,8 +4,7 @@ from covid.data import CovidDatasetLoader, CovidDatasetTracker, NullCovidDataset
 from covid.metric import METRIC_REGISTRY, MetricFactory
 from covid.pipeline import create_pipes
 from covid.run_config import RunConfig
-from covid.training import CrossValidator, CVTracker
-from covid.training.null_cv_tracker import NullCVTracker
+from covid.cross_val import CrossValidator, CVTracker, NullCVTracker
 
 
 def run_experiment(
