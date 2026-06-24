@@ -2,25 +2,28 @@ from pathlib import Path
 
 import yaml
 
-from covid.data import DatasetConfig
+from covid.data import DataCleaningConfig
 from covid.run_config import RunConfig
 from covid.training import TrainingConfig
 
 
 def from_yaml(path: Path) -> RunConfig:
+    with open(path, "r") as file:
+        config_data = yaml.safe_load(file)
+        dataset_config = config_data["dataset"]
     return RunConfig(
-        dataset=dataset_config_from_yaml(path),
+        raw_data_path=Path(dataset_config["raw_path"]),
+        cleaning=cleaning_config_from_yaml(path),
         train=training_config_from_yaml(path),
     )
 
 
-def dataset_config_from_yaml(path: Path) -> DatasetConfig:
+def cleaning_config_from_yaml(path: Path) -> DataCleaningConfig:
     with open(path, "r") as file:
         config_data = yaml.safe_load(file)
     config = config_data["dataset"]
 
-    return DatasetConfig(
-        raw_path=Path(config["raw_path"]),
+    return DataCleaningConfig(
         target_column=config["target_column"],
         id_column=config["id_column"],
         sparse_threshold=config["sparse_threshold"],

@@ -1,7 +1,6 @@
-import pandas as pd
 from loguru import logger
 
-from covid.data import CovidDataset
+from covid.data import CovidDatasetLoader
 from covid.metric import METRIC_REGISTRY, MetricFactory
 from covid.pipeline import create_pipes
 from covid.run_config import RunConfig
@@ -12,23 +11,14 @@ from covid.training.null_cv_tracker import NullCVTracker
 
 def run_experiment(
     run_config: RunConfig,
+    covid_dataset_loader: CovidDatasetLoader,
     tracker: ExperimentTracker = NullExperimentTracker(),
     cv_tracker: CVTracker = NullCVTracker(),
 ) -> None:
     tracker.log_run_config(run_config)
-    logger.info(f"Loading dataset from {run_config.dataset.raw_path}")
-    raw_df = pd.read_csv(run_config.dataset.raw_path)  # TODO: abstract to DatasetLoader
 
-    X, y = (
-        CovidDataset.from_dataframe(
-            raw_df,
-            target=run_config.dataset.target_column,
-            id_column=run_config.dataset.id_column,
-        )
-        .without_sparse_columns(threshold=run_config.dataset.sparse_threshold)
-        .as_categorical()
-        .split()
-    )
+    X, y = covid_dataset_loader.load_dataset(run_config.cleaning).split()
+
     logger.info("Processed X shape: {shape}", shape=X.shape)
     logger.info("Processed y shape: {shape}", shape=y.shape)
 

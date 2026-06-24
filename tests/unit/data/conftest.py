@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from covid.data import CovidDataset
+from covid.data import CovidDataset, DataCleaningConfig
 
 
 @pytest.fixture
@@ -13,7 +13,10 @@ def dataset() -> CovidDataset:
         "target": [0, 1, 0],
     }
     df = pd.DataFrame(data)
-    return CovidDataset.from_dataframe(df, target="target", id_column="id")
+    config = DataCleaningConfig(
+        target_column="target", id_column="id", sparse_threshold=0.5
+    )
+    return CovidDataset.from_dataframe(df, cleaning_config=config)
 
 
 @pytest.fixture
@@ -26,6 +29,7 @@ def sparse_dataset() -> CovidDataset:
         "target": [0, 1, 0],
     }
     df = pd.DataFrame(data)
-    return CovidDataset.from_dataframe(
-        df, target="target", id_column="id"
-    ).without_sparse_columns(threshold=0.5)
+    config = DataCleaningConfig(
+        target_column="target", id_column="id", sparse_threshold=0.5
+    )
+    return CovidDataset.from_dataframe(df, cleaning_config=config)

@@ -1,5 +1,7 @@
 import pandas as pd
 
+from .data_cleaning_config import DataCleaningConfig
+
 
 class CovidDataset:
     def __init__(self, X: pd.DataFrame, y: pd.Series) -> None:
@@ -8,11 +10,19 @@ class CovidDataset:
 
     @classmethod
     def from_dataframe(
-        cls, df: pd.DataFrame, target: str, id_column: str
+        cls, df: pd.DataFrame, cleaning_config: DataCleaningConfig
     ) -> CovidDataset:
-        X = df.drop(columns=[target])
-        y = df[target]
-        return cls(X, y)._with_basic_clean(id_column)
+        target_column = cleaning_config.target_column
+        id_column = cleaning_config.id_column
+
+        X = df.drop(columns=[target_column])
+        y = df[target_column]
+        return (
+            cls(X, y)
+            ._with_basic_clean(id_column)
+            ._without_sparse_columns(threshold=cleaning_config.sparse_threshold)
+            ._as_categorical()
+        )
 
     def to_dataframe(self) -> pd.DataFrame:
         return pd.concat([self._X, self._y], axis=1)
@@ -20,13 +30,13 @@ class CovidDataset:
     def split(self) -> tuple[pd.DataFrame, pd.Series]:
         return self.X, self.y
 
-    def without_sparse_columns(self, threshold: float) -> CovidDataset:
+    def _without_sparse_columns(self, threshold: float) -> CovidDataset:
         missing_ratio = self._X.isnull().mean()
         columns_to_drop = missing_ratio[missing_ratio > threshold].index
         X_cleaned = self._X.drop(columns=columns_to_drop)
         return CovidDataset(X_cleaned, self._y)
 
-    def as_categorical(self) -> CovidDataset:
+    def _as_categorical(self) -> CovidDataset:
         X = self._X.astype("category")
         return CovidDataset(X, self._y)
 
