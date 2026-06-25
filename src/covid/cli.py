@@ -49,6 +49,20 @@ def feature_selection(config_path: Path = Path("config/config.yaml")) -> None:
     )
 
 
+@app.command()
+def plot_shap(config_path: Path = Path("config/config.yaml")) -> None:
+    run_config = config_loader.from_yaml(config_path)
+    now = datetime.now().strftime("%d%m%Y_%H%M%S")
+    dataset_loader = CovidDatasetCSVLoader(raw_path=run_config.raw_data_path)
+
+    commands.generate_shap_plots(
+        dataset_loader=dataset_loader,
+        training_config=run_config.training,
+        cleaning_config=run_config.cleaning,
+        output_path=Path(f"logs/run_{now}/shap"),
+    )
+
+
 if __name__ == "__main__":
     sklearn.set_config(transform_output="pandas")
     app()

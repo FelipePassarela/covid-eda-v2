@@ -2,6 +2,7 @@
 **/config*.yaml
 !**/config.example.yaml
 logs/
+reports/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

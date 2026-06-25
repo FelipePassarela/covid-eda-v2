@@ -17,11 +17,10 @@ class CovidDataset:
 
         X = df.drop(columns=[target_column])
         y = df[target_column]
-        return (
+        return (  # TODO: Make this configurable
             cls(X, y)
             ._with_basic_clean(id_column)
             ._without_sparse_columns(threshold=cleaning_config.sparse_threshold)
-            ._as_categorical()
         )
 
     def to_dataframe(self) -> pd.DataFrame:
