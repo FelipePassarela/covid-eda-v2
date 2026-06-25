@@ -20,7 +20,7 @@ class CrossValidator:
         random_state: int | None,
         shuffle: bool,
         cv_tracker: CVTracker = NullCVTracker(),
-        cv_plotters: Sequence[CVPlotter] = [],
+        cv_plotters: Sequence[CVPlotter] | None = None,
     ):
         self._n_folds = n_folds
         self._metrics = metrics
@@ -29,7 +29,7 @@ class CrossValidator:
             n_splits=self._n_folds, shuffle=shuffle, random_state=self._random_state
         )
         self._cv_tracker = cv_tracker
-        self._cv_plotter = cv_plotters
+        self._cv_plotters = cv_plotters or []
 
     def run(
         self, models: Mapping[str, Pipeline], X: pd.DataFrame, y: pd.Series
@@ -39,12 +39,12 @@ class CrossValidator:
 
         total_steps = self._n_folds * len(models)
         with tqdm(total=total_steps, desc="Cross-validation") as pbar:
-            self._run_cv(models, X, y, result, lambda: pbar.update(1))
+            self._evaluate_models(models, X, y, result, lambda: pbar.update(1))
 
         self._log_results(result)
         return result
 
-    def _run_cv(
+    def _evaluate_models(
         self,
         models: Mapping[str, Pipeline],
         X: pd.DataFrame,
@@ -88,7 +88,7 @@ class CrossValidator:
             self._cv_tracker.log_model_params(model_name=name, params=params)
 
     def _log_results(self, result: CVResults) -> None:
-        for plotter in self._cv_plotter:
+        for plotter in self._cv_plotters:
             fig = plotter.plot_results(result)
             fig_filename = plotter.figure_filename()
             self._cv_tracker.log_cv_plot(fig, filename=fig_filename)
