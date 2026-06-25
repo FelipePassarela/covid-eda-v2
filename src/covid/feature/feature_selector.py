@@ -39,4 +39,4 @@ def select_best_features(
         selector.transform(X_test), columns=feature_names, index=X_test.index
     )
 
-    return X_train_selected, X_test_selected  # type: ignore
+    return X_train_selected, X_test_selected
