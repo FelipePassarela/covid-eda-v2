@@ -46,6 +46,7 @@ def feature_selection(config_path: Path = Path("config/config.yaml")) -> None:
         cleaning_config=run_config.cleaning,
         dataset_loader=dataset_loader,
         output_path=Path("data/processed"),
+        allow_data_leakage=False,  # TODO: Make this configurable
     )
 
 

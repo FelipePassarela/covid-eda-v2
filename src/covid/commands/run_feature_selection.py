@@ -22,6 +22,7 @@ def run_feature_selection(
     cleaning_config: DataCleaningConfig,
     dataset_loader: CovidDatasetLoader,
     output_path: Path,
+    allow_data_leakage: bool = False,
 ) -> None:
     logger.info(
         "Running feature selection with {n_features} features to select",
@@ -65,7 +66,7 @@ def run_feature_selection(
         y_train=y_train,
         y_test=y_test,
         selector=selector_pipe,
-        allow_data_leakage=True,  # TODO: Make this configurable
+        allow_data_leakage=allow_data_leakage,
     )
 
     X_full = pd.concat([X_train, X_test], axis=0)
@@ -74,7 +75,8 @@ def run_feature_selection(
 
     # TODO: Create abstracted data saving
     now = datetime.now().strftime("%d%m%Y_%H%M%S")
-    output_path = output_path / f"selected_{n_features}_{now}.csv"
+    dl_suffix = "_with_leakage" if allow_data_leakage else "_no_leakage"
+    output_path = output_path / f"selected_{n_features}{dl_suffix}_{now}.csv"
     data.to_csv(output_path, index=False)
     logger.success(
         "Feature selection completed. Selected features saved to {output_path}",
