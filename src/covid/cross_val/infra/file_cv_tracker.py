@@ -13,9 +13,16 @@ class FileCVTracker(CVTracker):
         self._output_dir.mkdir(parents=True, exist_ok=True)
 
     def log_cv_results(self, cv_results: CVResults) -> None:
-        output_file = self._output_dir / "cv_summary.json"
-        summary = cv_results.summarize()
-        summary.to_json(output_file, orient="records", lines=True)
+        fold_results_df = cv_results.to_dataframe()
+        fold_results_df.to_csv(self._output_dir / "fold_results.csv", index=False)
+        summary_df = cv_results.summarize()
+        # flatten the multi-index columns for easier CSV export
+        summary_df.columns = [
+            "_".join(col).strip() if isinstance(col, tuple) else col
+            for col in summary_df.columns.values
+        ]
+        summary_df.to_csv(self._output_dir / "summary_results.csv")
+
 
     def log_model_params(self, model_name: str, params: dict) -> None:
         output_file = self._output_dir / f"{model_name}_params.yaml"
