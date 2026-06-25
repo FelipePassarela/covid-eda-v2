@@ -14,7 +14,7 @@ from covid.pipeline import create_pipes
 from covid.run_config import RunConfig
 
 
-def run_experiment(
+def run_cross_validation(
     run_config: RunConfig,
     covid_dataset_loader: CovidDatasetLoader,
     dataset_tracker: CovidDatasetTracker = NullCovidDatasetTracker(),
@@ -27,23 +27,23 @@ def run_experiment(
     dataset = covid_dataset_loader.load_dataset(run_config.cleaning)
     dataset_tracker.log_dataset_metrics(dataset)
 
-    random_state = run_config.train.random_state
+    random_state = run_config.training.random_state
     pipes = create_pipes.create_pipes(random_state)
-    metrics = MetricFactory(METRIC_REGISTRY).create_all(run_config.train.metrics)
+    metrics = MetricFactory(METRIC_REGISTRY).create_all(run_config.training.metrics)
 
     logger.info("Created {n_models} models", n_models=len(pipes))
 
     X, y = dataset.split()
     cv = CrossValidator(
-        n_folds=run_config.train.n_folds,
+        n_folds=run_config.training.n_folds,
         metrics=metrics,
         random_state=random_state,
-        shuffle=run_config.train.shuffle,
+        shuffle=run_config.training.shuffle,
         cv_tracker=cv_tracker,
         cv_plotters=cv_plotters,
     )
     result = cv.run(pipes, X, y)
 
-    sort_by = run_config.train.metrics[0]
+    sort_by = run_config.training.metrics[0]
     summary = result.summarize(sort_by=sort_by)
     logger.info("Cross-validation summary:\n{summary}", summary=summary)

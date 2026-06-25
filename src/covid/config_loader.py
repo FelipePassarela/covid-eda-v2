@@ -2,9 +2,9 @@ from pathlib import Path
 
 import yaml
 
+from covid.cross_val import TrainingConfig
 from covid.data import DataCleaningConfig
 from covid.run_config import RunConfig
-from covid.cross_val import TrainingConfig
 
 
 def from_yaml(path: Path) -> RunConfig:
@@ -14,7 +14,7 @@ def from_yaml(path: Path) -> RunConfig:
     return RunConfig(
         raw_data_path=Path(dataset_config["raw_path"]),
         cleaning=cleaning_config_from_yaml(path),
-        train=training_config_from_yaml(path),
+        training=training_config_from_yaml(path),
     )
 
 

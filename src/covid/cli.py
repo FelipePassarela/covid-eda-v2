@@ -1,18 +1,21 @@
 from datetime import datetime
 from pathlib import Path
 
+import sklearn
 import typer
 
-from covid import config_loader
+from covid import commands, config_loader
 from covid.cross_val import BoxplotCVPlotter, FileCVTracker
-from covid.data import CovidDatasetCSVLoader, FileCovidDatasetTracker
-from covid.experiment import run_experiment
+from covid.data import (
+    CovidDatasetCSVLoader,
+    FileCovidDatasetTracker,
+)
 
 app = typer.Typer()
 
 
 @app.command()
-def cli(config_path: Path = Path("config/config.yaml")) -> None:
+def cross_validation(config_path: Path = Path("config/config.yaml")) -> None:
     run_config = config_loader.from_yaml(config_path)
 
     now = datetime.now().strftime("%d%m%Y_%H%M%S")
@@ -22,9 +25,9 @@ def cli(config_path: Path = Path("config/config.yaml")) -> None:
         output_dir=Path(f"logs/run_{now}/dataset")
     )
     cv_tracker = FileCVTracker(output_dir=Path(f"logs/run_{now}/cv"))
-    cv_plotters = [BoxplotCVPlotter(evaluation_metric=run_config.train.metrics[0])]
+    cv_plotters = [BoxplotCVPlotter(evaluation_metric=run_config.training.metrics[0])]
 
-    run_experiment(
+    commands.run_cross_validation(
         run_config=run_config,
         covid_dataset_loader=dataset_loader,
         dataset_tracker=dataset_tracker,
@@ -33,5 +36,19 @@ def cli(config_path: Path = Path("config/config.yaml")) -> None:
     )
 
 
+@app.command()
+def feature_selection(config_path: Path = Path("config/config.yaml")) -> None:
+    run_config = config_loader.from_yaml(config_path)
+    dataset_loader = CovidDatasetCSVLoader(raw_path=run_config.raw_data_path)
+    commands.run_feature_selection(
+        n_features=50,  # TODO: Make selector params configurable
+        train_config=run_config.training,
+        cleaning_config=run_config.cleaning,
+        dataset_loader=dataset_loader,
+        output_path=Path("data/processed"),
+    )
+
+
 if __name__ == "__main__":
+    sklearn.set_config(transform_output="pandas")
     app()

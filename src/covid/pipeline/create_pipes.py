@@ -1,19 +1,12 @@
 from sklearn.pipeline import Pipeline
 
-from covid.feature import (
-    IMPUTER_REGISTRY,
-    REDUCER_REGISTRY,
-    SCALER_REGISTRY,
-    PreprocessorFactory,
-)
+from covid.feature import PREPROCESSOR_REGISTRY, PreprocessorFactory
 from covid.model import MODEL_ALIASES, MODEL_REGISTRY, ModelFactory
 
 
 def create_pipes(random_state: int | None) -> dict[str, Pipeline]:
     model_factory = ModelFactory(MODEL_REGISTRY, MODEL_ALIASES)
-    preprocessor_factory = PreprocessorFactory(
-        IMPUTER_REGISTRY, SCALER_REGISTRY, REDUCER_REGISTRY
-    )
+    preprocessor_factory = PreprocessorFactory(PREPROCESSOR_REGISTRY)
 
     # TODO: this is a bit hacky - we should have a more flexible way to define pipelines in the config
     linear_preprocessor = Pipeline(
