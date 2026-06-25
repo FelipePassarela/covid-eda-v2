@@ -5,7 +5,7 @@ import shap
 from sklearn.model_selection import train_test_split
 
 from covid.cross_val import TrainingConfig
-from covid.data import CovidDatasetLoader, DataCleaningConfig
+from covid.data import CovidDatasetLoader, CovidDatasetTracker, DataCleaningConfig
 from covid.model import MODEL_ALIASES, MODEL_REGISTRY, ModelFactory
 
 
@@ -13,9 +13,14 @@ def generate_shap_plots(
     dataset_loader: CovidDatasetLoader,
     training_config: TrainingConfig,
     cleaning_config: DataCleaningConfig,
+    dataset_tracker: CovidDatasetTracker,
     output_path: Path,
 ) -> None:
     dataset = dataset_loader.load_dataset(cleaning_config)
+    
+    dataset_tracker.log_cleaning_config(cleaning_config)
+    dataset_tracker.log_dataset_metrics(dataset)
+
     X, y = dataset.split()
     X_train, _, y_train, _ = train_test_split(
         X,
