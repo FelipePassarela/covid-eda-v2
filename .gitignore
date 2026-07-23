@@ -1,4 +1,4 @@
-/data
+data/**/*.csv
 config/*.yaml
 !**/config.example.yaml
 logs/
