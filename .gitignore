@@ -3,6 +3,7 @@ config/*.yaml
 !**/config.example.yaml
 logs/
 reports/
+.idea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
