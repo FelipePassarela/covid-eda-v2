@@ -1,16 +1,13 @@
 import pandas as pd
 
 
-def missing_summary_by_chromosome(
-    df: pd.DataFrame, loci_columns: list[str]
-) -> pd.DataFrame:
-    locus_columns = pd.Series(loci_columns)
-    chromosomes = locus_columns.str.extract(r"^(chr(?:\d+|X|Y|M))", expand=False)
+def missing_summary_by_chromosome(loci_data: pd.DataFrame) -> pd.DataFrame:
+    chromosomes = loci_data.columns.str.extract(r"^(chr(?:\d+|X|Y|M))", expand=False)
 
     locus_missing_rate = pd.DataFrame(
         {
             "chromosome": chromosomes,
-            "missing_rate": df[locus_columns].isna().mean().to_numpy() * 100,
+            "missing_rate": loci_data.isna().mean().to_numpy() * 100,
         }
     )
 

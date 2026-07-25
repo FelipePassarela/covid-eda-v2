@@ -55,8 +55,9 @@ def alleles_summary(genotypes: pd.Series) -> pd.Series:
     return pd.Series({"maf": maf})
 
 
-def chromosomes_imbalance_summary(df, loci_columns: list[str]) -> pd.DataFrame:
-    summary = imbalance_summary(df, loci_columns)
+def chromosomes_imbalance_summary(loci_data: pd.DataFrame) -> pd.DataFrame:
+    loci_columns = loci_data.columns.to_list()
+    summary = imbalance_summary(loci_data, loci_columns)
     return (
         summary.groupby("chromosome")
         .agg(
