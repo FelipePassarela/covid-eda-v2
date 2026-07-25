@@ -39,3 +39,6 @@ dev = [
     "pytest>=9.1.0",
 ]
 
+[project.scripts]
+split = "covid.cli.split_data:main"
+
