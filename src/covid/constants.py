@@ -7,4 +7,6 @@ RAW_DATA_DIR = DATA_DIR / "raw"
 INTERIM_DATA_DIR = DATA_DIR / "interim"
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
 
-LONG_COVID_RAW_DATA_PATH = RAW_DATA_DIR / "longa_nao_vacinados.csv"
+RAW_DATA_PATH = RAW_DATA_DIR / "longa_nao_vacinados.csv"
+INTERIM_TRAIN_DATA_PATH = INTERIM_DATA_DIR / "train.csv"
+INTERIM_TEST_DATA_PATH = INTERIM_DATA_DIR / "test.csv"
