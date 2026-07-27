@@ -27,9 +27,9 @@ def locus_with_target_association(locus: pd.Series, target: pd.Series) -> pd.Ser
 
     return pd.Series(
         {
-            "chi2": chi2,
             "p_value": p_value,
             "cramers_v": cramers_v,
+            "chi2": chi2,
             "min_expected_count": expected.min(),
             "sparse_table": (expected < 5).any(),
         },
@@ -40,7 +40,10 @@ def locus_with_target_association(locus: pd.Series, target: pd.Series) -> pd.Ser
 def loci_correlation(
     association_summary_data: pd.DataFrame, loci_data: pd.DataFrame, max_loci: int = 50
 ) -> pd.DataFrame:
-    top_loci = association_summary_data.head(max_loci).index
+    associated = association_summary_data.sort_values(
+        ["q_value", "cramers_v"], ascending=[True, False]
+    )
+    top_loci = associated.head(max_loci).index
     return loci_data[top_loci].corr(method="spearman")
 
 
