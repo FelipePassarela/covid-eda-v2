@@ -37,7 +37,7 @@ def locus_with_target_association(locus: pd.Series, target: pd.Series) -> pd.Ser
     )
 
 
-def loci_correlation(
+def loci_correlation_from_summary(
     association_summary_data: pd.DataFrame, loci_data: pd.DataFrame, max_loci: int = 50
 ) -> pd.DataFrame:
     associated = association_summary_data.sort_values(
