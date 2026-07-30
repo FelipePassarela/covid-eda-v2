@@ -42,4 +42,4 @@ dev = [
 
 [project.scripts]
 split = "covid.cli.split_data:main"
-
+eval = "covid.cli.eval_models:main"
