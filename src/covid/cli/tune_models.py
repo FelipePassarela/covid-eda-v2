@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from typing import Any
 
 import pandas as pd
 import typer
@@ -9,7 +10,7 @@ from covid import constants
 from covid.data import load_data, split_features_and_target
 from covid.data.data import sample_data
 from covid.tuning import (
-    HyperparameterSearchResult,
+    RandomizedSearchSpec,
     create_all_specs,
     create_specs,
     search_hyperparameters,
@@ -18,7 +19,9 @@ from covid.tuning.tracking import WAndBTracker
 
 
 def main() -> None:
+    constants.LOGS_DIR.mkdir(parents=True, exist_ok=True)
     logger.add(constants.LOGS_DIR / "tune_models.log", rotation="5 MB")
+
     typer.run(run_model_searches)
 
 
@@ -29,12 +32,25 @@ def run_model_searches(
 ) -> None:
     train_data = load_data(data_path=constants.INTERIM_TRAIN_DATA_PATH)
     train_data = sample_data(train_data, n_samples=15) if quick else train_data
-
     X_train, y_train = split_features_and_target(train_data)
 
-    if scoring is None:
-        scoring = ["balanced_accuracy", "recall", "f1", "precision", "roc_auc"]
+    scoring = resolve_scoring(scoring)
+    specs = resolve_specs(search_specs, scoring, quick)
 
+    for spec in specs:
+        run_search(X_train, y_train, spec, quick)
+
+
+def resolve_scoring(scoring: list[str] | None) -> list[str]:
+    default_scoring = ["balanced_accuracy", "recall", "f1", "precision", "roc_auc"]
+    scoring = default_scoring if scoring is None else scoring
+    logger.info(f"Using scoring metrics: {scoring}")
+    return scoring
+
+
+def resolve_specs(
+    search_specs: list[str] | None, scoring: list[str], quick: bool
+) -> list[RandomizedSearchSpec]:
     specs = (
         create_specs(search_specs, scoring, quick)
         if search_specs
@@ -42,19 +58,22 @@ def run_model_searches(
     )
     spec_names = [spec.name for spec in specs]
     logger.info(f"Running searches for {spec_names}")
-
-    for spec in specs:
-        with wandb.init(project="covid", config=asdict(spec)) as run:
-            tracker = WAndBTracker(run)
-            result = search_hyperparameters(X_train, y_train, spec=spec)
-            tracker.track_result(result)
+    return specs
 
 
-def log_search_result(result: HyperparameterSearchResult) -> None:
-    logger.info(f"Best parameters: {result.best_params}")
-    logger.info(f"Best score: {result.best_score:.3f}")
-    with pd.option_context("display.max_columns", None):
-        logger.info(f"Report:\n{result.report.round(2)}")
+def run_search(
+    X_train: pd.DataFrame, y_train: pd.Series, spec: RandomizedSearchSpec, quick: bool
+) -> None:
+    with wandb.init(
+        project="covid",
+        name=spec.name,
+        group="quick" if quick else "full",
+        job_type="hyperparameter-search",
+        config=spec.as_serializable(),
+    ) as run:
+        tracker = WAndBTracker(run)
+        result = search_hyperparameters(X_train, y_train, spec=spec)
+        tracker.track_result(result)
 
 
 if __name__ == "__main__":
