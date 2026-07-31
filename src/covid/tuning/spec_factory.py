@@ -5,7 +5,7 @@ from sklearn.svm import SVC, LinearSVC
 from xgboost import XGBClassifier
 
 from covid import constants
-from covid.pipeline import DEFAULT_PIPELINE
+from covid.pipeline import create_default_pipeline
 from covid.tuning import RandomizedSearchSpec
 
 
@@ -31,7 +31,7 @@ def create_all_specs(
 def create_xgboost_spec(scoring: list[str], quick: bool) -> RandomizedSearchSpec:
     return RandomizedSearchSpec(
         name="xgboost",
-        pipeline=DEFAULT_PIPELINE,
+        pipeline=create_default_pipeline(),
         param_distributions={
             "scaler": [None],
             "classifier": [
@@ -61,7 +61,7 @@ def create_logistic_regression_spec(
 ) -> RandomizedSearchSpec:
     return RandomizedSearchSpec(
         name="logistic_regression",
-        pipeline=DEFAULT_PIPELINE,
+        pipeline=create_default_pipeline(),
         param_distributions={
             "selector__k": randint(5, 30),
             "classifier__C": loguniform(0.00001, 100),
@@ -76,7 +76,7 @@ def create_logistic_regression_spec(
 def create_linear_svm_spec(scoring: list[str], quick: bool) -> RandomizedSearchSpec:
     return RandomizedSearchSpec(
         name="linear_svm",
-        pipeline=DEFAULT_PIPELINE,
+        pipeline=create_default_pipeline(),
         param_distributions={
             "selector__k": randint(5, 30),
             "classifier": [LinearSVC(random_state=constants.RANDOM_STATE)],
@@ -92,7 +92,7 @@ def create_linear_svm_spec(scoring: list[str], quick: bool) -> RandomizedSearchS
 def create_svm_rbf_spec(scoring: list[str], quick: bool) -> RandomizedSearchSpec:
     return RandomizedSearchSpec(
         name="svm_rbf",
-        pipeline=DEFAULT_PIPELINE,
+        pipeline=create_default_pipeline(),
         param_distributions={
             "selector__k": randint(5, 30),
             "classifier": [SVC(random_state=constants.RANDOM_STATE)],

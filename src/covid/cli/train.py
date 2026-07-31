@@ -5,12 +5,11 @@ import joblib
 import pandas as pd
 import typer
 from loguru import logger
-from sklearn import clone
 from sklearn.model_selection import RepeatedStratifiedKFold, TunedThresholdClassifierCV
 
 from covid import constants
 from covid.data import load_data, split_features_and_target
-from covid.pipeline import DEFAULT_PIPELINE
+from covid.pipeline import create_default_pipeline
 
 
 def main() -> None:
@@ -41,7 +40,7 @@ def train_model(
         n_splits=5, n_repeats=5, random_state=constants.RANDOM_STATE
     )
     model = TunedThresholdClassifierCV(
-        estimator=clone(DEFAULT_PIPELINE),
+        estimator=create_default_pipeline(),
         scoring=scoring,
         cv=cv,
         n_jobs=-1,
