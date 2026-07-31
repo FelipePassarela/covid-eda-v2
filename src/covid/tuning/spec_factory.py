@@ -29,18 +29,16 @@ def create_all_specs(
 
 
 def create_xgboost_spec(scoring: list[str], quick: bool) -> RandomizedSearchSpec:
+    classifier = XGBClassifier(
+        objective="binary:logistic", n_jobs=1, random_state=constants.RANDOM_STATE
+    )
     return RandomizedSearchSpec(
         name="xgboost",
         pipeline=create_default_pipeline(),
         param_distributions={
             "scaler": [None],
-            "classifier": [
-                XGBClassifier(
-                    objective="binary:logistic",
-                    n_jobs=1,
-                    random_state=constants.RANDOM_STATE,
-                )
-            ],
+            "selector__k": randint(5, 30),
+            "classifier": [classifier],
             "classifier__n_estimators": randint(50, 701),
             "classifier__learning_rate": loguniform(1e-4, 3e-1),
             "classifier__max_depth": randint(2, 5),
@@ -105,10 +103,7 @@ def create_svm_rbf_spec(scoring: list[str], quick: bool) -> RandomizedSearchSpec
     )
 
 
-SpecFactory = Callable[
-    [list[str], bool],
-    RandomizedSearchSpec,
-]
+SpecFactory = Callable[[list[str], bool], RandomizedSearchSpec]
 
 SPEC_FACTORIES: dict[str, SpecFactory] = {
     "xgboost": create_xgboost_spec,

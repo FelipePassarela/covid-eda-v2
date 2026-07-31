@@ -21,7 +21,7 @@ def create_default_pipeline() -> Pipeline:
         [
             ("dropper", ColumnDropper(columns_to_drop=[feature.ID])),
             ("missing_rate_dropper", HighMissingRateDropper(missing_threshold=0.05)),
-            ("imputer", SimpleImputer(strategy="mean")),
+            ("imputer", SimpleImputer(strategy="most_frequent")),
             ("selector", SelectKBest(score_func=chi2, k=14)),
             ("scaler", StandardScaler()),
             ("sampler", RandomOverSampler(random_state=constants.RANDOM_STATE)),
@@ -37,7 +37,7 @@ def create_explainable_pipeline() -> Pipeline:
         [
             ("dropper", ColumnDropper(columns_to_drop=[feature.ID])),
             ("missing_rate_dropper", HighMissingRateDropper(missing_threshold=0.05)),
-            ("imputer", SimpleImputer(strategy="mean")),
+            ("imputer", SimpleImputer(strategy="most_frequent")),
             ("selector", SelectKBest(score_func=chi2, k=14)),
             ("sampler", RandomOverSampler(random_state=constants.RANDOM_STATE)),
             ("classifier", classifier),
