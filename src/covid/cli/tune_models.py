@@ -18,21 +18,17 @@ from covid.tuning.tracking import WAndBTracker
 
 
 def main() -> None:
-    logger.add(constants.LOGS_DIR / "eval_models.log", rotation="5 MB")
-    typer.run(tune_models)
+    logger.add(constants.LOGS_DIR / "tune_models.log", rotation="5 MB")
+    typer.run(run_model_searches)
 
 
-def tune_models(
+def run_model_searches(
     quick: bool = False,
     search_specs: list[str] | None = None,
     scoring: list[str] | None = None,
 ) -> None:
     train_data = load_data(data_path=constants.INTERIM_TRAIN_DATA_PATH)
-    logger.info(f"loaded data with shape {train_data.shape}")
-
-    if quick:
-        train_data = sample_data(train_data, n_samples=15)
-        logger.info(f"sampled data to shape {train_data.shape}")
+    train_data = sample_data(train_data, n_samples=15) if quick else train_data
 
     X_train, y_train = split_features_and_target(train_data)
 
