@@ -11,4 +11,6 @@ RAW_DATA_PATH = RAW_DATA_DIR / "longa_nao_vacinados.csv"
 INTERIM_TRAIN_DATA_PATH = INTERIM_DATA_DIR / "train.csv"
 INTERIM_TEST_DATA_PATH = INTERIM_DATA_DIR / "test.csv"
 
+LOGS_DIR = ROOT_DIR / "logs"
+
 RANDOM_STATE = 42
