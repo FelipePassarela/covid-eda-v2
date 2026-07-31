@@ -2,6 +2,7 @@ from typing import Iterator
 
 import pandas as pd
 from pandas import DataFrame, Series
+from sklearn.callback import ProgressBar
 from sklearn.model_selection import RandomizedSearchCV, RepeatedStratifiedKFold
 
 from covid import constants
@@ -30,10 +31,11 @@ def search_hyperparameters(
         refit=spec.scoring[0],
         cv=cv,
         return_train_score=True,
-        verbose=2,
+        verbose=1,
         n_jobs=-1,
         random_state=constants.RANDOM_STATE,
     )
+    search.set_callbacks(ProgressBar())
 
     search.fit(X, y)
 
