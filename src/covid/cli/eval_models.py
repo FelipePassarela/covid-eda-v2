@@ -1,15 +1,19 @@
+from dataclasses import asdict
+
 import pandas as pd
 import typer
 from loguru import logger
 
+import wandb
 from covid import constants
 from covid.data import load_data, split_features_and_target
 from covid.data.data import sample_data
 from covid.tuning import (
     HyperparameterSearchResult,
     RandomizedSearchSpec,
-    search_for_hyperparameters,
+    search_hyperparameters,
 )
+from covid.tuning.tracking import WAndBTracker
 
 
 def main() -> None:
@@ -29,10 +33,11 @@ def tune_models(quick: bool = False) -> None:
     scoring = ["balanced_accuracy", "recall", "f1", "precision", "roc_auc"]
     search_specs = RandomizedSearchSpec.create_specs(scoring, quick)
 
-    for result in search_for_hyperparameters(
-        X_train, y_train, search_specs=search_specs
-    ):
-        log_search_result(result)
+    for spec in search_specs:
+        with wandb.init(project="covid", config=asdict(spec)) as run:
+            tracker = WAndBTracker(run)
+            result = search_hyperparameters(X_train, y_train, spec=spec)
+            tracker.track_result(result)
 
 
 def log_search_result(result: HyperparameterSearchResult) -> None:

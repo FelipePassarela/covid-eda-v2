@@ -9,14 +9,14 @@ from covid.tuning.search_result import HyperparameterSearchResult
 from covid.tuning.search_spec import RandomizedSearchSpec
 
 
-def search_for_hyperparameters(
+def run_hyperparameter_searches(
     X: DataFrame, y: Series, search_specs: list[RandomizedSearchSpec]
 ) -> Iterator[HyperparameterSearchResult]:
     for spec in search_specs:
-        yield _search_hyperparameters(X, y, spec)
+        yield search_hyperparameters(X, y, spec)
 
 
-def _search_hyperparameters(
+def search_hyperparameters(
     X: pd.DataFrame, y: pd.Series, spec: RandomizedSearchSpec
 ) -> HyperparameterSearchResult:
     cv = RepeatedStratifiedKFold(

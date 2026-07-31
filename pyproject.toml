@@ -28,6 +28,7 @@ dependencies = [
     "tqdm>=4.68.3",
     "typer>=0.26.7",
     "umap-learn>=0.5.12",
+    "wandb>=0.28.1",
     "xgboost>=3.3.0",
 ]
 
