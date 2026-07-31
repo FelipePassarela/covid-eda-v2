@@ -225,6 +225,7 @@ source = { editable = "." }
 dependencies = [
     { name = "imbalanced-learn" },
     { name = "ipykernel" },
+    { name = "joblib" },
     { name = "loguru" },
     { name = "matplotlib" },
     { name = "missingno" },
@@ -256,6 +257,7 @@ dev = [
 requires-dist = [
     { name = "imbalanced-learn", specifier = ">=0.14.2" },
     { name = "ipykernel", specifier = ">=7.3.0" },
+    { name = "joblib", specifier = ">=1.5.3" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "matplotlib", specifier = ">=3.11.0" },
     { name = "missingno", specifier = ">=0.5.2" },
