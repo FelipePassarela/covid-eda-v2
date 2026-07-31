@@ -46,3 +46,4 @@ dev = [
 split = "covid.cli.split_data:main"
 tune = "covid.cli.tune_models:main"
 train = "covid.cli.train:main"
+eval = "covid.cli.evaluate:main"
