@@ -73,7 +73,7 @@ def run_search(
     ) as run:
         tracker = WAndBTracker(run)
         result = search_hyperparameters(X_train, y_train, spec=spec)
-        tracker.track_result(result)
+        tracker.track_search(spec, result)
 
 
 if __name__ == "__main__":
