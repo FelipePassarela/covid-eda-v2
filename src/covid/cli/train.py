@@ -1,59 +1,54 @@
 from pathlib import Path
 from typing import Any
 
+import hydra
 import joblib
-import pandas as pd
-import typer
+from hydra.utils import instantiate
+from imblearn.pipeline import Pipeline
 from loguru import logger
-from sklearn.model_selection import RepeatedStratifiedKFold, TunedThresholdClassifierCV
+from omegaconf import DictConfig, OmegaConf
+from sklearn.model_selection import TunedThresholdClassifierCV
 
+import wandb
 from covid import constants
-from covid.data import load_data, split_features_and_target
-from covid.pipeline import create_default_pipeline
+from covid.data import load_data
+from covid.training import WAndBTrainingTracker, train
 
 
-def main() -> None:
+@hydra.main(version_base=None, config_path="conf", config_name="train")
+def main(config: DictConfig) -> None:
     constants.LOGS_DIR.mkdir(parents=True, exist_ok=True)
     logger.add(constants.LOGS_DIR / "train.log", rotation="5 MB")
+    logger.info("Training configuration: {}", OmegaConf.to_yaml(config))
 
-    typer.run(train)
+    train_data_path = Path(config.train_data_path)
+    output_path = Path(config.output_path)
 
-
-def train(
-    train_data: Path = constants.INTERIM_TRAIN_DATA_PATH,
-    output_path: Path = constants.MODELS_DIR / "final_model.joblib",
-    scoring: str = "balanced_accuracy",
-) -> None:
-    train_data = load_data(train_data)
-    X_train, y_train = split_features_and_target(train_data)
-
-    model = train_model(X_train, y_train, scoring)
-
-    report_scores(model, scoring)
-    save_model(model, output_path)
-
-
-def train_model(
-    X_train: pd.DataFrame, y_train: pd.Series[Any], scoring: str
-) -> TunedThresholdClassifierCV:
-    cv = RepeatedStratifiedKFold(
-        n_splits=5, n_repeats=5, random_state=constants.RANDOM_STATE
+    config_to_report = OmegaConf.to_container(
+        config, resolve=True, throw_on_missing=True
     )
-    model = TunedThresholdClassifierCV(
-        estimator=create_default_pipeline(),
-        scoring=scoring,
-        cv=cv,
-        n_jobs=-1,
-        store_cv_results=True,
-    )
-    model.fit(X_train, y_train)
-    return model
 
+    with wandb.init(
+        project="covid",
+        name=output_path.name,
+        job_type="train",
+        config=config_to_report,
+    ) as run:
+        model: Pipeline = instantiate(config.pipeline)
+        model.set_output(transform="pandas")
 
-def report_scores(model: TunedThresholdClassifierCV, scoring: str) -> None:
-    scoring_formatted = scoring.replace("_", " ")
-    logger.info("Best cross-validated {}: {:.4f}", scoring_formatted, model.best_score_)
-    logger.info("Selected decision threshold: {:.4f}", model.best_threshold_)
+        train_data = load_data(train_data_path)
+
+        tracker = WAndBTrainingTracker(run)
+        model: Pipeline | TunedThresholdClassifierCV = train(
+            model=model,
+            train_data=train_data,
+            tune_threshold=config.tune_threshold,
+            tuning_scoring=config.tuning_scoring,
+            tracker=tracker,
+        )
+        save_model(model, output_path)
+        tracker.track_model(output_path)
 
 
 def save_model(model: Any, output_path: Path) -> None:
