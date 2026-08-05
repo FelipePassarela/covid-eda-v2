@@ -1,20 +1,10 @@
-from typing import Iterator
-
 import pandas as pd
-from pandas import DataFrame, Series
 from sklearn.callback import ProgressBar
 from sklearn.model_selection import RandomizedSearchCV, RepeatedStratifiedKFold
 
 from covid import constants
 from covid.tuning.search_result import HyperparameterSearchResult
 from covid.tuning.search_spec import RandomizedSearchSpec
-
-
-def run_hyperparameter_searches(
-    X: DataFrame, y: Series, search_specs: list[RandomizedSearchSpec]
-) -> Iterator[HyperparameterSearchResult]:
-    for spec in search_specs:
-        yield search_hyperparameters(X, y, spec)
 
 
 def search_hyperparameters(

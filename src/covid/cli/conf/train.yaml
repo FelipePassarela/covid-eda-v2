@@ -1,0 +1,11 @@
+defaults:
+  - pipeline: lr-selectk-rfecv
+  - _self_
+
+name: train-${hydra:runtime.choices.pipeline}
+
+train_data_path: data/interim/train.csv
+output_path: models/${hydra:runtime.choices.pipeline}.joblib
+
+tune_threshold: false
+tuning_scoring: balanced_accuracy
