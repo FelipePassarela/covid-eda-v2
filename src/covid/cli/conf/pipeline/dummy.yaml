@@ -1,0 +1,15 @@
+_target_: imblearn.pipeline.Pipeline
+steps:
+  - - column_dropper
+    - _target_: covid.feature.ColumnDropper
+      columns_to_drop:
+        - id
+
+  - - imputer
+    - _target_: sklearn.impute.SimpleImputer
+      strategy: most_frequent
+
+  - - classifier
+    - _target_: sklearn.dummy.DummyClassifier
+      strategy: most_frequent
+      random_state: 42

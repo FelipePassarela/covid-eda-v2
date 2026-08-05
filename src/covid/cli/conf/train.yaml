@@ -1,52 +1,9 @@
+defaults:
+  - pipeline: lr-selectk-rfecv
+  - _self_
+
 train_data_path: data/interim/train.csv
-output_path: models/lr-selectkbest-rfecv-no-thresh.joblib
+output_path: models/${hydra:runtime.choices.pipeline}.joblib
 
 tune_threshold: false
 tuning_scoring: balanced_accuracy
-
-pipeline:
-  _target_: imblearn.pipeline.Pipeline
-  steps:
-    - - column_dropper
-      - _target_: covid.feature.ColumnDropper
-        columns_to_drop:
-          - id
-
-    - - missing_rate_dropper
-      - _target_: covid.feature.HighMissingRateDropper
-        missing_threshold: 0.05
-
-    - - imputer
-      - _target_: sklearn.impute.SimpleImputer
-        strategy: most_frequent
-
-    - - filter
-      - _target_: sklearn.feature_selection.SelectKBest
-        k: 50
-        score_func:
-          _target_: sklearn.feature_selection.chi2
-          _partial_: true
-
-    - - selector
-      - _target_: sklearn.feature_selection.RFECV
-        estimator:
-          _target_: sklearn.linear_model.LogisticRegression
-          solver: lbfgs
-          C: 0.001
-          random_state: 42
-          max_iter: 5000
-        min_features_to_select: 10
-
-    - - scaler
-      - _target_: sklearn.preprocessing.StandardScaler
-
-    - - sampler
-      - _target_: imblearn.over_sampling.RandomOverSampler
-        random_state: 42
-
-    - - classifier
-      - _target_: sklearn.linear_model.LogisticRegression
-        solver: lbfgs
-        C: 0.001
-        random_state: 42
-        max_iter: 5000

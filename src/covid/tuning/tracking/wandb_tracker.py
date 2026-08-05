@@ -7,7 +7,7 @@ import wandb
 from covid.tuning import HyperparameterSearchResult, RandomizedSearchSpec
 
 
-class WAndBTracker:
+class WAndBTuningTracker:
     def __init__(self, run: wandb.Run) -> None:
         self.run = run
 
@@ -15,11 +15,11 @@ class WAndBTracker:
         self, spec: RandomizedSearchSpec, result: HyperparameterSearchResult
     ) -> None:
         self.run.summary["best_score"] = result.best_score
-        self.run.summary["best_params"] = WAndBTracker._make_serializable(
+        self.run.summary["best_params"] = WAndBTuningTracker._make_serializable(
             result.best_params
         )
         self.run.log(
-            {"results": WAndBTracker._to_wandb_table(result.report, spec.name)}
+            {"results": WAndBTuningTracker._to_wandb_table(result.report, spec.name)}
         )
 
     def track_spec(self, spec: RandomizedSearchSpec) -> None: ...
@@ -49,11 +49,11 @@ class WAndBTracker:
 
         if isinstance(value, dict):
             return {
-                str(key): WAndBTracker._make_serializable(item)
+                str(key): WAndBTuningTracker._make_serializable(item)
                 for key, item in value.items()
             }
 
         if isinstance(value, list | tuple):
-            return [WAndBTracker._make_serializable(item) for item in value]
+            return [WAndBTuningTracker._make_serializable(item) for item in value]
 
         return repr(value)

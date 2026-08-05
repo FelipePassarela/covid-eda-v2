@@ -1,26 +1,55 @@
-from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Self
 
 from imblearn.pipeline import Pipeline
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    PositiveInt,
+    field_serializer,
+    model_validator,
+)
 
 
-@dataclass
-class RandomizedSearchSpec:
-    name: str
+class RandomizedSearchSpec(BaseModel):
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True, extra="forbid", validate_assignment=True
+    )
+
+    name: str = Field(min_length=1)
     pipeline: Pipeline
-    param_distributions: dict[str, Any]
-    n_searches: int
-    n_fold_repeats: int = 5
-    scoring: list[str] = field(default_factory=lambda: ["balanced_accuracy"])
+    param_distributions: dict[str, Any] = Field(min_length=1)
+    n_searches: PositiveInt
+    n_fold_repeats: PositiveInt = 5
+    scoring: list[str] = Field(
+        default_factory=lambda: ["balanced_accuracy"], min_length=1
+    )
+
+    @model_validator(mode="after")
+    def validate_parameter_names(self) -> Self:
+        pipeline_parameters = self.pipeline.get_params(deep=True)
+        unknown_parameters = (
+            self.param_distributions.keys() - pipeline_parameters.keys()
+        )
+
+        if unknown_parameters:
+            formatted = ", ".join(sorted(unknown_parameters))
+            raise ValueError(f"unknown pipeline parameters: {formatted}")
+
+        return self
+
+    @field_serializer("pipeline")
+    def serialize_pipeline(self, pipeline: Pipeline) -> str:
+        return repr(pipeline)
+
+    @field_serializer("param_distributions")
+    def serialize_param_distributions(
+        self, distributions: dict[str, Any]
+    ) -> dict[str, str]:
+        return {
+            parameter: repr(distribution)
+            for parameter, distribution in distributions.items()
+        }
 
     def as_serializable(self) -> dict[str, Any]:
-        return {
-            "name": self.name,
-            "n_searches": self.n_searches,
-            "n_fold_repeats": self.n_fold_repeats,
-            "scoring": self.scoring,
-            "pipeline": repr(self.pipeline),
-            "param_distributions": {
-                param: repr(distr) for param, distr in self.param_distributions.items()
-            },
-        }
+        return self.model_dump()

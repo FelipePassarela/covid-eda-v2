@@ -1,1 +1,1 @@
-from .wandb_tracker import WAndBTracker
+from .wandb_tracker import WAndBTuningTracker
