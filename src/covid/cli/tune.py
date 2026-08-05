@@ -15,7 +15,7 @@ from covid.tuning.tracking import WAndBTuningTracker
 
 @hydra.main(version_base=None, config_path="conf", config_name="tune")
 def main(config: DictConfig) -> None:
-    prepare_log_dir()
+    configure_logging()
     logger.info("Tuning configuration: {}", OmegaConf.to_yaml(config))
 
     X_train, y_train = prepare_data(config)
@@ -23,7 +23,7 @@ def main(config: DictConfig) -> None:
     run_tuning(X_train, y_train, search_spec, config)
 
 
-def prepare_log_dir() -> None:
+def configure_logging() -> None:
     constants.LOGS_DIR.mkdir(parents=True, exist_ok=True)
     logger.add(constants.LOGS_DIR / "tune_models.log", rotation="5 MB")
 
@@ -60,19 +60,21 @@ def run_tuning(
     spec: RandomizedSearchSpec,
     config: DictConfig,
 ) -> None:
-    config_to_report = cast(
-        dict[str, Any],
-        OmegaConf.to_container(config, resolve=True, throw_on_missing=True),
-    )
-
     with wandb.init(
         project="covid",
         name=spec.name,
         job_type="tuning",
-        config=config_to_report,
+        config=prepare_config_for_wandb(config),
     ) as run:
         result = search_hyperparameters(X_train, y_train, spec=spec)
         WAndBTuningTracker(run).track_search(spec, result)
+
+
+def prepare_config_for_wandb(config: DictConfig) -> dict[str, Any]:
+    return cast(
+        dict[str, Any],
+        OmegaConf.to_container(config, resolve=True, throw_on_missing=True),
+    )
 
 
 if __name__ == "__main__":
