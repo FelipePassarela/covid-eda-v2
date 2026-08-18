@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 import joblib
 import pandas as pd
@@ -10,10 +11,14 @@ from covid.data import load_and_split_data
 
 
 def load_and_split_pipeline(pipeline_path: Path) -> tuple[Pipeline, BaseEstimator]:
-    pipeline = joblib.load(pipeline_path)
+    pipeline = load_pipeline(pipeline_path)
     pipeline = _unwrap_threshold_model_if_needed(pipeline)
     preprocessor, classifier = _split_pipeline_components(pipeline)
     return preprocessor, classifier
+
+
+def load_pipeline(pipeline_path: Path) -> Pipeline:
+    return joblib.load(pipeline_path)
 
 
 def _unwrap_threshold_model_if_needed(
