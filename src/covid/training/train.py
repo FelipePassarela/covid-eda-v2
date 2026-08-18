@@ -4,21 +4,19 @@ from loguru import logger
 from sklearn.model_selection import RepeatedStratifiedKFold, TunedThresholdClassifierCV
 
 from covid import constants
-from covid.data import split_features_and_target
 from covid.training.tracker import TrainingTracker
 
 
 def train(
     model: Pipeline,
-    train_data: pd.DataFrame,
+    X_train: pd.DataFrame,
+    y_train: pd.Series,
     tune_threshold: bool,
     tuning_scoring: str,
     tracker: TrainingTracker,
 ) -> Pipeline | TunedThresholdClassifierCV:
     logger.info("Training model: {}", model)
     logger.info("Threshold tuning: {}", tune_threshold)
-
-    X_train, y_train = split_features_and_target(train_data)
 
     tracker.track_data(X_train, y_train)
 

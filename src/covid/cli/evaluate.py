@@ -5,7 +5,7 @@ import typer
 from loguru import logger
 
 from covid import constants
-from covid.data import load_data, split_features_and_target
+from covid.data import load_and_split_data
 from covid.evaluation import EvaluationResult
 
 
@@ -16,10 +16,10 @@ def main() -> None:
     typer.run(evaluate_model)
 
 
-def evaluate_model(model_path: Path) -> None:
-    test_data = load_data(constants.INTERIM_TEST_DATA_PATH)
-    X_test, y_test = split_features_and_target(test_data)
-
+def evaluate_model(
+    model_path: Path, data_path: Path = constants.INTERIM_TEST_DATA_PATH
+) -> None:
+    X_test, y_test = load_and_split_data(data_path)
     model = joblib.load(model_path)
     result = EvaluationResult.from_model(model, X_test, y_test)
 

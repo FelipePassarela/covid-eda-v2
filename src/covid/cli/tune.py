@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, cast
 
 import hydra
@@ -8,7 +9,7 @@ from omegaconf import DictConfig, OmegaConf
 
 import wandb
 from covid import constants
-from covid.data import load_data, split_features_and_target
+from covid.data import load_and_split_data
 from covid.tuning import RandomizedSearchSpec, search_hyperparameters
 from covid.tuning.tracking import WAndBTuningTracker
 
@@ -17,7 +18,7 @@ from covid.tuning.tracking import WAndBTuningTracker
 def main(config: DictConfig) -> None:
     configure_logging()
 
-    X_train, y_train = prepare_data(config)
+    X_train, y_train = load_and_split_data(Path(config.train_data_path))
     search_spec = create_search_spec(config)
     run_tuning(X_train, y_train, search_spec, config)
 
@@ -25,12 +26,6 @@ def main(config: DictConfig) -> None:
 def configure_logging() -> None:
     constants.LOGS_DIR.mkdir(parents=True, exist_ok=True)
     logger.add(constants.LOGS_DIR / "tune_models.log", rotation="5 MB")
-
-
-def prepare_data(config: DictConfig) -> tuple[pd.DataFrame, pd.Series]:
-    train_data = load_data(config.train_data_path)
-    X_train, y_train = split_features_and_target(train_data)
-    return X_train, y_train
 
 
 def create_search_spec(config: DictConfig) -> RandomizedSearchSpec:

@@ -12,7 +12,7 @@ from sklearn.model_selection import TunedThresholdClassifierCV
 from sklearn.pipeline import Pipeline as SklearnPipeline
 
 from covid import constants
-from covid.data import load_data, split_features_and_target
+from covid.data import load_and_split_data
 
 
 def main() -> None:
@@ -24,18 +24,15 @@ def explain(
     train_path: Path = constants.INTERIM_TRAIN_DATA_PATH,
     test_path: Path = constants.INTERIM_TEST_DATA_PATH,
 ) -> None:
-    train_data = load_data(train_path)
-    X_train, _ = split_features_and_target(train_data)
-
     threshold_model = joblib.load(pipeline_path)
     pipeline = unwrap_threshold_model(threshold_model)
     preprocessor, classifier = split_fitted_pipeline(pipeline)
 
-    test_data = load_data(test_path)
-    X_test, _ = split_features_and_target(test_data)
-
-    X_test_transformed = preprocessor.transform(X_test)
+    X_train, _ = load_and_split_data(train_path)
     X_train_transformed = preprocessor.transform(X_train)
+
+    X_test, _ = load_and_split_data(test_path)
+    X_test_transformed = preprocessor.transform(X_test)
 
     explanation = create_shap_explanation(
         X_train_transformed, X_test_transformed, classifier
@@ -47,7 +44,7 @@ def unwrap_threshold_model(
     threshold_model: TunedThresholdClassifierCV,
 ) -> ImblearnPipeline:
     if not isinstance(threshold_model, TunedThresholdClassifierCV):
-        raise ValueError(
+        raise TypeError(
             "The provided model is not a TunedThresholdClassifierCV instance."
         )
     return threshold_model.estimator_

@@ -11,7 +11,7 @@ from sklearn.model_selection import TunedThresholdClassifierCV
 
 import wandb
 from covid import constants
-from covid.data import load_data
+from covid.data import load_and_split_data
 from covid.training import WAndBTrainingTracker, train
 
 
@@ -38,13 +38,13 @@ def run_train(config: DictConfig) -> None:
         model: Pipeline = instantiate(config.pipeline)
         model.set_output(transform="pandas")
 
-        train_data_path = Path(config.train_data_path)
-        train_data = load_data(train_data_path)
+        X_train, y_train = load_and_split_data(Path(config.train_data_path))
 
         tracker = WAndBTrainingTracker(run)
         trained_model: Pipeline | TunedThresholdClassifierCV = train(
             model=model,
-            train_data=train_data,
+            X_train=X_train,
+            y_train=y_train,
             tune_threshold=config.tune_threshold,
             tuning_scoring=config.tuning_scoring,
             tracker=tracker,
