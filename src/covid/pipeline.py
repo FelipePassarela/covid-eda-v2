@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import Any
 
 import joblib
 import pandas as pd
 from imblearn.pipeline import Pipeline
+from loguru import logger
 from sklearn.base import BaseEstimator
 from sklearn.model_selection import TunedThresholdClassifierCV
 
@@ -53,3 +53,11 @@ def load_and_transform_features(
 ) -> pd.DataFrame:
     X_train, _ = load_and_split_data(data_path)
     return preprocessor.transform(X_train)
+
+
+def save_pipeline(
+    model: Pipeline | TunedThresholdClassifierCV, output_path: Path
+) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    joblib.dump(model, output_path)
+    logger.success("Pipeline saved to {}", output_path)
