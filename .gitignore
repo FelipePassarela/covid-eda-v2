@@ -6,6 +6,9 @@ reports/
 .idea/
 wandb/
 models/
+outputs/
+multirun/
+report/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

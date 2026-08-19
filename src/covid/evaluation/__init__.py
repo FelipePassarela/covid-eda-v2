@@ -1,3 +1,3 @@
-from .result import EvaluationResult
+from .evaluate import evaluate
 
-__all__ = ["EvaluationResult"]
+__all__ = ["evaluate"]

@@ -1,41 +1,55 @@
+from pathlib import Path
+
 import pandas as pd
 from imblearn.pipeline import Pipeline
 from loguru import logger
+from pandas import DataFrame, Series
 from sklearn.model_selection import RepeatedStratifiedKFold, TunedThresholdClassifierCV
 
 from covid import constants
-from covid.data import split_features_and_target
+from covid.data import load_and_split_data
+from covid.pipeline import save_pipeline
+from covid.training.spec import TrainingSpec
 from covid.training.tracker import TrainingTracker
 
 
-def train(
-    model: Pipeline,
-    train_data: pd.DataFrame,
-    tune_threshold: bool,
-    tuning_scoring: str,
-    tracker: TrainingTracker,
-) -> Pipeline | TunedThresholdClassifierCV:
+def fit(spec: TrainingSpec) -> None:
+    model = spec.model
     logger.info("Training model: {}", model)
-    logger.info("Threshold tuning: {}", tune_threshold)
 
-    X_train, y_train = split_features_and_target(train_data)
-
-    tracker.track_data(X_train, y_train)
-
-    if tune_threshold:
-        model = _train_with_threshold_tuning(
-            model=model, X_train=X_train, y_train=y_train, scoring=tuning_scoring
-        )
-        tracker.track_threshold_tuning(model, tuning_scoring)
-        _report_threshold_tuning_scores(model, tuning_scoring)
-    else:
-        model = model.fit(X_train, y_train)
-
-    return model
+    X, y = _load_data(spec.data_path, tracker=spec.tracker)
+    trained_model = model.fit(X, y)
+    _save_model(trained_model, output_path=spec.model_output_path, tracker=spec.tracker)
 
 
-def _train_with_threshold_tuning(
-    model: Pipeline, X_train: pd.DataFrame, y_train: pd.Series, scoring: str
+def _load_data(data_path: Path, tracker: TrainingTracker) -> tuple[DataFrame, Series]:
+    X, y = load_and_split_data(data_path)
+    tracker.track_data(X, y)
+    return X, y
+
+
+def _save_model(
+    model: Pipeline | TunedThresholdClassifierCV,
+    output_path: Path,
+    tracker: TrainingTracker,
+) -> None:
+    save_pipeline(model, output_path)
+    tracker.track_model(output_path)
+
+
+def tune_threshold(spec: TrainingSpec, scoring: str) -> None:
+    logger.info("Training model with threshold tuning: {}", spec.model)
+    logger.info("Threshold tuning scoring: {}", scoring)
+
+    X, y = _load_data(spec.data_path, tracker=spec.tracker)
+    tuned_model = _tune_threshold(spec.model, X, y, scoring=scoring)
+
+    _report_threshold_tuning_scores(tuned_model, scoring=scoring, tracker=spec.tracker)
+    _save_model(tuned_model, output_path=spec.model_output_path, tracker=spec.tracker)
+
+
+def _tune_threshold(
+    model: Pipeline, X: pd.DataFrame, y: pd.Series, scoring: str
 ) -> TunedThresholdClassifierCV:
     cv = RepeatedStratifiedKFold(
         n_splits=5, n_repeats=5, random_state=constants.RANDOM_STATE
@@ -43,13 +57,15 @@ def _train_with_threshold_tuning(
     model = TunedThresholdClassifierCV(
         estimator=model, scoring=scoring, cv=cv, n_jobs=-1, store_cv_results=True
     )
-    model.fit(X_train, y_train)
+    model.fit(X, y)
     return model
 
 
 def _report_threshold_tuning_scores(
-    model: TunedThresholdClassifierCV, scoring: str
+    model: TunedThresholdClassifierCV, scoring: str, tracker: TrainingTracker
 ) -> None:
+    tracker.track_threshold_tuning(model, scoring)
+
     scoring_formatted = scoring.replace("_", " ")
     logger.info("Best cross-validated {}: {:.4f}", scoring_formatted, model.best_score_)
     logger.info("Selected decision threshold: {:.4f}", model.best_threshold_)

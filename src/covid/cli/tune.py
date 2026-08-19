@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, cast
 
 import hydra
@@ -8,29 +9,19 @@ from omegaconf import DictConfig, OmegaConf
 
 import wandb
 from covid import constants
-from covid.data import load_data, split_features_and_target
+from covid.cli.logging import configure_logging, log_config
+from covid.data import load_and_split_data
 from covid.tuning import RandomizedSearchSpec, search_hyperparameters
 from covid.tuning.tracking import WAndBTuningTracker
 
 
 @hydra.main(version_base=None, config_path="conf", config_name="tune")
 def main(config: DictConfig) -> None:
-    configure_logging()
+    configure_logging(constants.LOGS_DIR / "tune.log")
 
-    X_train, y_train = prepare_data(config)
+    X_train, y_train = load_and_split_data(Path(config.train_data_path))
     search_spec = create_search_spec(config)
     run_tuning(X_train, y_train, search_spec, config)
-
-
-def configure_logging() -> None:
-    constants.LOGS_DIR.mkdir(parents=True, exist_ok=True)
-    logger.add(constants.LOGS_DIR / "tune_models.log", rotation="5 MB")
-
-
-def prepare_data(config: DictConfig) -> tuple[pd.DataFrame, pd.Series]:
-    train_data = load_data(config.train_data_path)
-    X_train, y_train = split_features_and_target(train_data)
-    return X_train, y_train
 
 
 def create_search_spec(config: DictConfig) -> RandomizedSearchSpec:
@@ -59,7 +50,7 @@ def run_tuning(
     spec: RandomizedSearchSpec,
     config: DictConfig,
 ) -> None:
-    logger.info("Tuning configuration: {}", OmegaConf.to_yaml(config))
+    log_config(config)
 
     with wandb.init(
         project="covid",
