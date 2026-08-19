@@ -3,7 +3,6 @@ from pathlib import Path
 import pandas as pd
 from imblearn.pipeline import Pipeline
 from loguru import logger
-from pandas import DataFrame, Series
 from sklearn.model_selection import RepeatedStratifiedKFold, TunedThresholdClassifierCV
 
 from covid import constants
@@ -22,7 +21,9 @@ def fit(spec: TrainingSpec) -> None:
     _save_model(trained_model, output_path=spec.model_output_path, tracker=spec.tracker)
 
 
-def _load_data(data_path: Path, tracker: TrainingTracker) -> tuple[DataFrame, Series]:
+def _load_data(
+    data_path: Path, tracker: TrainingTracker
+) -> tuple[pd.DataFrame, pd.Series]:
     X, y = load_and_split_data(data_path)
     tracker.track_data(X, y)
     return X, y

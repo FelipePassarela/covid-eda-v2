@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Self
 
-from pandas import DataFrame, Series
+import pandas as pd
 from sklearn.model_selection import TunedThresholdClassifierCV
 
 import wandb
@@ -24,7 +24,7 @@ class WAndBTrainingTracker:
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self._run.finish()
 
-    def track_data(self, X_train: DataFrame, y_train: Series) -> None:
+    def track_data(self, X_train: pd.DataFrame, y_train: pd.Series) -> None:
         self._run.summary.update(
             {
                 "data/n_samples": len(X_train),

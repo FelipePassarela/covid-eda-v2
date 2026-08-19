@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pandas as pd
 from loguru import logger
-from pandas import DataFrame
 
 from covid import feature
 from covid.data import split_features_and_target
@@ -20,7 +19,7 @@ def load_and_split_data(data_path: Path) -> tuple[pd.DataFrame, pd.Series]:
     return X, y
 
 
-def save_data(data: DataFrame, output_path: Path) -> None:
+def save_data(data: pd.DataFrame, output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     data.to_csv(output_path, index=False)
     logger.info(f"Data with shape {data.shape} saved to {output_path}")
