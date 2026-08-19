@@ -1,20 +1,15 @@
 from pathlib import Path
 
 import typer
-from loguru import logger
 
 from covid import constants
+from covid.cli.logging import configure_logging
 from covid.evaluation import evaluate as run_evaluation
 
 
 def main() -> None:
-    configure_logging()
+    configure_logging(constants.LOGS_DIR / "evaluate.log")
     typer.run(evaluate)
-
-
-def configure_logging() -> None:
-    constants.LOGS_DIR.mkdir(parents=True, exist_ok=True)
-    logger.add(constants.LOGS_DIR / "evaluate.log", rotation="5 MB")
 
 
 def evaluate(

@@ -4,10 +4,10 @@ from typing import Any, cast
 import hydra
 from hydra.utils import instantiate
 from imblearn.pipeline import Pipeline
-from loguru import logger
 from omegaconf import DictConfig, OmegaConf
 
 from covid import constants
+from covid.cli.logging import configure_logging, log_config
 from covid.training import (
     TrainingSpec,
     TrainingTracker,
@@ -19,13 +19,8 @@ from covid.training import (
 
 @hydra.main(version_base=None, config_path="conf", config_name="train")
 def main(config: DictConfig) -> None:
-    configure_logging()
+    configure_logging(constants.LOGS_DIR / "train.log")
     train(config)
-
-
-def configure_logging() -> None:
-    constants.LOGS_DIR.mkdir(parents=True, exist_ok=True)
-    logger.add(constants.LOGS_DIR / "train.log", rotation="5 MB")
 
 
 def train(config: DictConfig) -> None:
@@ -40,10 +35,6 @@ def train(config: DictConfig) -> None:
             tune_threshold(spec, scoring=config.tuning_scoring)
         else:
             fit(spec)
-
-
-def log_config(config: DictConfig) -> None:
-    logger.info("Training configuration: {}", OmegaConf.to_yaml(config))
 
 
 def prepare_config_for_wandb(config: DictConfig) -> dict[str, Any]:
