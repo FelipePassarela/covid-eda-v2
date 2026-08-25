@@ -1,41 +1,36 @@
 from pathlib import Path
 
 import pandas as pd
-from sklearn.metrics import (
-    balanced_accuracy_score,
-    confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
-    roc_auc_score,
-)
-from sklearn.pipeline import Pipeline
 
 from covid.data import load_and_split_data
+from covid.eval.context import EvaluationContext
 from covid.evaluation.result import EvaluationResult
 from covid.evaluation.result_presenter import present_evaluation_result
+from covid.evaluation.tracker import EvaluationTracker
 from covid.pipeline import load_pipeline
 
 
-def evaluate(pipeline_path: Path, data_path: Path) -> None:
-    X, y = load_and_split_data(data_path)
-    pipeline = load_pipeline(pipeline_path)
+def evaluate(pipeline_path: Path, data_path: Path, tracker: EvaluationTracker) -> None:
+    tracker.track_spec(pipeline_path, data_path)
 
-    result = _evaluate_pipeline(pipeline, X, y)
+    X, y = load_and_split_data(data_path)
+    context = EvaluationContext(X, y, pipeline=load_pipeline(pipeline_path))
+    result = _evaluate_pipeline(context)
+
+    tracker.track_context(context)
+    tracker.track_result(result)
     present_evaluation_result(result)
 
 
-def _evaluate_pipeline(
-    pipeline: Pipeline, X_test: pd.DataFrame, y_test: pd.Series
-) -> EvaluationResult:
-    y_pred = pipeline.predict(X_test)
-    y_proba = pipeline.predict_proba(X_test)[:, 1]
+def _evaluate_pipeline(ctx: EvaluationContext) -> EvaluationResult:
+    X, y = ctx.X, ctx.y
+    pipeline = ctx.pipeline
 
-    return EvaluationResult(
-        balanced_accuracy=balanced_accuracy_score(y_test, y_pred),
-        recall=recall_score(y_test, y_pred),
-        precision=precision_score(y_test, y_pred),
-        f1=f1_score(y_test, y_pred),
-        roc_auc=roc_auc_score(y_test, y_proba),
-        confusion_matrix=confusion_matrix(y_test, y_pred),
+    y_pred = pipeline.predict(X)
+    y_score = pipeline.predict_proba(X)[:, 1]
+
+    return EvaluationResult.from_predictions(
+        y_true=y,
+        y_pred=pd.Series(y_pred, index=y.index),
+        y_score=pd.Series(y_score, index=y.index),
     )

@@ -1,3 +1,4 @@
 from .evaluate import evaluate
+from .wandb_tracker import WandBEvaluationTracker
 
-__all__ = ["evaluate"]
+__all__ = ["WandBEvaluationTracker", "evaluate"]

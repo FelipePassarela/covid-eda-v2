@@ -10,18 +10,26 @@ from sklearn.model_selection import TunedThresholdClassifierCV
 from covid.data import load_and_split_data
 
 
-def load_and_split_pipeline(pipeline_path: Path) -> tuple[Pipeline, BaseEstimator]:
-    pipeline = load_pipeline(pipeline_path)
-    pipeline = _unwrap_threshold_model_if_needed(pipeline)
-    preprocessor, classifier = _split_pipeline_components(pipeline)
-    return preprocessor, classifier
-
-
 def load_pipeline(pipeline_path: Path) -> Pipeline:
     return joblib.load(pipeline_path)
 
 
-def _unwrap_threshold_model_if_needed(
+def split_pipeline(pipeline: Pipeline) -> tuple[Pipeline, BaseEstimator]:
+    pipeline = unwrap_threshold_model_if_needed(pipeline)
+
+    # imblearn resamplers cannot be used in inference, so we need to remove them
+    transformer_steps = [
+        (name, step)
+        for name, step in pipeline.steps[:-1]
+        if not hasattr(step, "fit_resample")
+    ]
+    preprocessor = Pipeline(steps=transformer_steps)
+    classifier = pipeline[-1]
+
+    return preprocessor, classifier
+
+
+def unwrap_threshold_model_if_needed(
     model: TunedThresholdClassifierCV | Pipeline,
 ) -> Pipeline:
     if isinstance(model, TunedThresholdClassifierCV):
@@ -32,20 +40,6 @@ def _unwrap_threshold_model_if_needed(
         "Expected model to be either a Pipeline or TunedThresholdClassifierCV, "
         f"got {type(model)} instead."
     )
-
-
-def _split_pipeline_components(
-    pipeline: Pipeline,
-) -> tuple[Pipeline, BaseEstimator]:
-    # imblearn resamplers cannot be used in inference, so we need to remove them
-    transformer_steps = [
-        (name, step)
-        for name, step in pipeline.steps[:-1]
-        if not hasattr(step, "fit_resample")
-    ]
-    preprocessor = Pipeline(steps=transformer_steps)
-    classifier = pipeline[-1]
-    return preprocessor, classifier
 
 
 def load_and_transform_features(
