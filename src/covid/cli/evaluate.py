@@ -4,8 +4,8 @@ import typer
 
 from covid import constants
 from covid.cli.logging import configure_logging
-from covid.evaluation import WandBEvaluationTracker
-from covid.evaluation import evaluate as run_evaluation
+from covid.eval import WandBEvaluationTracker
+from covid.eval import evaluate as run_evaluation
 
 
 def main() -> None:

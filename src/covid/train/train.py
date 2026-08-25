@@ -8,8 +8,8 @@ from sklearn.model_selection import RepeatedStratifiedKFold, TunedThresholdClass
 from covid import constants
 from covid.data import load_and_split_data
 from covid.pipeline import save_pipeline
-from covid.training.spec import TrainingSpec
-from covid.training.tracker import TrainingTracker
+from covid.train.spec import TrainingSpec
+from covid.train.tracker import TrainingTracker
 
 
 def fit(spec: TrainingSpec) -> None:

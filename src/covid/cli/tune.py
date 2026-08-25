@@ -11,8 +11,8 @@ import wandb
 from covid import constants
 from covid.cli.logging import configure_logging, log_config
 from covid.data import load_and_split_data
-from covid.tuning import RandomizedSearchSpec, search_hyperparameters
-from covid.tuning.tracking import WAndBTuningTracker
+from covid.tune import RandomizedSearchSpec, search_hyperparameters
+from covid.tune.tracking import WAndBTuningTracker
 
 
 @hydra.main(version_base=None, config_path="conf", config_name="tune")
