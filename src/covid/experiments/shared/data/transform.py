@@ -1,7 +1,7 @@
 import pandas as pd
 from loguru import logger
 
-from covid import feature
+from covid.experiments.shared import feature
 
 
 def split_features_and_target(data: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:

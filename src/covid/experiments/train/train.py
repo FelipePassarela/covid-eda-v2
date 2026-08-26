@@ -5,11 +5,11 @@ from imblearn.pipeline import Pipeline
 from loguru import logger
 from sklearn.model_selection import RepeatedStratifiedKFold, TunedThresholdClassifierCV
 
-from covid import constants
-from covid.data import load_and_split_data
-from covid.pipeline import save_pipeline
-from covid.train.spec import TrainingSpec
-from covid.train.tracker import TrainingTracker
+from covid.experiments.shared import constants
+from covid.experiments.shared.data import load_and_split_data
+from covid.experiments.shared.pipeline import save_pipeline
+from covid.experiments.train.spec import TrainingSpec
+from covid.experiments.train.tracker import TrainingTracker
 
 
 def fit(spec: TrainingSpec) -> None:

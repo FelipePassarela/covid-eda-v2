@@ -6,9 +6,9 @@ from hydra.utils import instantiate
 from imblearn.pipeline import Pipeline
 from omegaconf import DictConfig, OmegaConf
 
-from covid import constants
+from covid import paths
 from covid.cli.logging import configure_logging, log_config
-from covid.train import (
+from covid.experiments.train import (
     TrainingSpec,
     TrainingTracker,
     WAndBTrainingTracker,
@@ -19,7 +19,7 @@ from covid.train import (
 
 @hydra.main(version_base=None, config_path="conf", config_name="train")
 def main(config: DictConfig) -> None:
-    configure_logging(constants.LOGS_DIR / "train.log")
+    configure_logging(paths.LOGS_DIR / "train.log")
     train(config)
 
 

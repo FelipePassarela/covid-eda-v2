@@ -4,7 +4,7 @@ from typing import Any
 import pandas as pd
 
 import wandb
-from covid.tune import HyperparameterSearchResult, RandomizedSearchSpec
+from covid.experiments.tune import HyperparameterSearchResult, RandomizedSearchSpec
 
 
 class WAndBTuningTracker:

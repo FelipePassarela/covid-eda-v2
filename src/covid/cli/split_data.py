@@ -3,10 +3,10 @@ from pathlib import Path
 import typer
 from sklearn.model_selection import train_test_split
 
-from covid import constants
-from covid.data import load_data
-from covid.data.io import save_data
-from covid.feature import TARGET
+from covid import paths
+from covid.experiments.shared import constants
+from covid.experiments.shared.data import load_data, save_data
+from covid.experiments.shared.feature import TARGET
 
 
 def main() -> None:
@@ -14,8 +14,8 @@ def main() -> None:
 
 
 def split_data(
-    data_path: Path = constants.RAW_DATA_PATH,
-    output_dir: Path = constants.INTERIM_DATA_DIR,
+    data_path: Path = paths.RAW_DATA_PATH,
+    output_dir: Path = paths.INTERIM_DATA_DIR,
     test_size: float = 0.2,
     random_state: int | None = constants.RANDOM_STATE,
 ) -> None:

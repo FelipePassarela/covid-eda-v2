@@ -7,7 +7,7 @@ from loguru import logger
 from sklearn.base import BaseEstimator
 from sklearn.model_selection import TunedThresholdClassifierCV
 
-from covid.data import load_and_split_data
+from covid.experiments.shared.data import load_and_split_data
 
 
 def load_pipeline(pipeline_path: Path) -> Pipeline:

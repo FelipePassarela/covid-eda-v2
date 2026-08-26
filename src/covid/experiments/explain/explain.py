@@ -1,14 +1,14 @@
 from matplotlib import pyplot as plt
 
-from covid.explain.result import ExplainingResult
-from covid.explain.shap_calculator import (
+from covid.experiments.explain.result import ExplainingResult
+from covid.experiments.explain.shap_calculator import (
     calculate_shap_importances,
     create_shap_explanation,
     plot_shap_explanation,
 )
-from covid.explain.spec import ExplainingSpec
-from covid.explain.tracker import ExplainingTracker
-from covid.pipeline import (
+from covid.experiments.explain.spec import ExplainingSpec
+from covid.experiments.explain.tracker import ExplainingTracker
+from covid.experiments.shared.pipeline import (
     load_and_transform_features,
     load_pipeline,
     split_pipeline,

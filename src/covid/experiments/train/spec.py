@@ -3,7 +3,7 @@ from pathlib import Path
 
 from imblearn.pipeline import Pipeline
 
-from covid.train.tracker import TrainingTracker
+from covid.experiments.train.tracker import TrainingTracker
 
 
 @dataclass(frozen=True)

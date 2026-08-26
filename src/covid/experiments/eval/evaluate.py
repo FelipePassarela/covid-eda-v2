@@ -2,12 +2,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from covid.data import load_and_split_data
-from covid.eval.context import EvaluationContext
-from covid.eval.result import EvaluationResult
-from covid.eval.result_presenter import present_evaluation_result
-from covid.eval.tracker import EvaluationTracker
-from covid.pipeline import load_pipeline
+from covid.experiments.shared.data import load_and_split_data
+from covid.experiments.eval.context import EvaluationContext
+from covid.experiments.eval.result import EvaluationResult
+from covid.experiments.eval.result_presenter import present_evaluation_result
+from covid.experiments.eval.tracker import EvaluationTracker
+from covid.experiments.shared.pipeline import load_pipeline
 
 
 def evaluate(pipeline_path: Path, data_path: Path, tracker: EvaluationTracker) -> None:
