@@ -3,7 +3,7 @@ from typing import Self
 
 import wandb
 from covid.eval.context import EvaluationContext
-from covid.evaluation.result import EvaluationResult
+from covid.eval.result import EvaluationResult
 from covid.pipeline import unwrap_threshold_model_if_needed
 
 

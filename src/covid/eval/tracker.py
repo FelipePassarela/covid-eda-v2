@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Protocol
 
 from covid.eval.context import EvaluationContext
-from covid.evaluation.result import EvaluationResult
+from covid.eval.result import EvaluationResult
 
 
 class EvaluationTracker(Protocol):

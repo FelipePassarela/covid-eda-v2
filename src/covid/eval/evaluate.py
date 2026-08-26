@@ -4,9 +4,9 @@ import pandas as pd
 
 from covid.data import load_and_split_data
 from covid.eval.context import EvaluationContext
-from covid.evaluation.result import EvaluationResult
-from covid.evaluation.result_presenter import present_evaluation_result
-from covid.evaluation.tracker import EvaluationTracker
+from covid.eval.result import EvaluationResult
+from covid.eval.result_presenter import present_evaluation_result
+from covid.eval.tracker import EvaluationTracker
 from covid.pipeline import load_pipeline
 
 
