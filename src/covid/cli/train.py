@@ -8,7 +8,7 @@ from omegaconf import DictConfig, OmegaConf
 
 from covid import constants
 from covid.cli.logging import configure_logging, log_config
-from covid.training import (
+from covid.train import (
     TrainingSpec,
     TrainingTracker,
     WAndBTrainingTracker,
