@@ -1,6 +1,6 @@
 import pandas as pd
 
-from covid.experiments.eval.result import EvaluationResult
+from covid.eval.result import EvaluationResult
 
 
 def present_evaluation_result(result: EvaluationResult) -> None:

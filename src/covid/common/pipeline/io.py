@@ -6,7 +6,7 @@ from imblearn.pipeline import Pipeline
 from loguru import logger
 from sklearn.model_selection import TunedThresholdClassifierCV
 
-from covid.experiments.shared.data import load_and_split_data
+from covid.common.data import load_and_split_data
 
 
 def load_pipeline(pipeline_path: Path) -> Pipeline:

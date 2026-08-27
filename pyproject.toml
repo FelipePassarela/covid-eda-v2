@@ -46,8 +46,8 @@ dev = [
 ]
 
 [project.scripts]
-split = "covid.cli.split_data:main"
-tune = "covid.cli.tune:main"
-train = "covid.cli.train:main"
-eval = "covid.cli.evaluate:main"
-explain = "covid.cli.explain:main"
+split = "covid.ingest.split_data:main"
+tune = "covid.tune.cli:main"
+train = "covid.train.cli:main"
+eval = "covid.eval.cli:main"
+explain = "covid.explain.cli:main"

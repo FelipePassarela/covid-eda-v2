@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from covid.experiments.tune import HyperparameterSearchResult, RandomizedSearchSpec
+from covid.tune import HyperparameterSearchResult, RandomizedSearchSpec
 
 
 class HyperparameterSearchTracker(Protocol):

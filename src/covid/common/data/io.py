@@ -3,8 +3,8 @@ from pathlib import Path
 import pandas as pd
 from loguru import logger
 
-from covid.experiments.shared import feature
-from covid.experiments.shared.data.transform import split_features_and_target
+from covid.common import feature
+from covid.common.data.transform import split_features_and_target
 
 
 def load_data(data_path: Path) -> pd.DataFrame:

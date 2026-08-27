@@ -2,9 +2,9 @@ from pathlib import Path
 from typing import Self
 
 import wandb
-from covid.experiments.eval.context import EvaluationContext
-from covid.experiments.eval.result import EvaluationResult
-from covid.experiments.shared.pipeline import unwrap_threshold_model_if_needed
+from covid.eval.context import EvaluationContext
+from covid.eval.result import EvaluationResult
+from covid.common.pipeline import unwrap_threshold_model_if_needed
 
 
 class WandBEvaluationTracker:

@@ -1,3 +1,3 @@
-from .experiments.shared import feature
+from covid.common import feature
 
 __all__ = ["feature"]

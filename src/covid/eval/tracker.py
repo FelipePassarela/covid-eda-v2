@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Protocol
 
-from covid.experiments.eval.context import EvaluationContext
-from covid.experiments.eval.result import EvaluationResult
+from covid.eval.context import EvaluationContext
+from covid.eval.result import EvaluationResult
 
 
 class EvaluationTracker(Protocol):

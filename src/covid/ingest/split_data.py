@@ -3,10 +3,9 @@ from pathlib import Path
 import typer
 from sklearn.model_selection import train_test_split
 
-from covid import paths
-from covid.experiments.shared import constants
-from covid.experiments.shared.data import load_data, save_data
-from covid.experiments.shared.feature import TARGET
+from covid.common import constants, paths
+from covid.common.data import load_data, save_data
+from covid.common.feature import TARGET
 
 
 def main() -> None:

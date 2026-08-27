@@ -2,9 +2,9 @@ import pandas as pd
 from sklearn.callback import ProgressBar
 from sklearn.model_selection import RandomizedSearchCV, RepeatedStratifiedKFold
 
-from covid.experiments.shared import constants
-from covid.experiments.tune.search_result import HyperparameterSearchResult
-from covid.experiments.tune.search_spec import RandomizedSearchSpec
+from covid.common import constants
+from covid.tune.search_result import HyperparameterSearchResult
+from covid.tune.search_spec import RandomizedSearchSpec
 
 
 def search_hyperparameters(

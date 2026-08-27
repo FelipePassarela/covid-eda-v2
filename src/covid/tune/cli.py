@@ -8,14 +8,14 @@ from loguru import logger
 from omegaconf import DictConfig, OmegaConf
 
 import wandb
-from covid import paths
-from covid.cli.logging import configure_logging, log_config
-from covid.experiments.shared.data import load_and_split_data
-from covid.experiments.tune import RandomizedSearchSpec, search_hyperparameters
-from covid.experiments.tune.tracking import WAndBTuningTracker
+from covid.common import paths
+from covid.common.data import load_and_split_data
+from covid.common.logging import configure_logging, log_config
+from covid.tune import RandomizedSearchSpec, search_hyperparameters
+from covid.tune.tracking import WAndBTuningTracker
 
 
-@hydra.main(version_base=None, config_path="conf", config_name="tune")
+@hydra.main(version_base=None, config_path="../conf", config_name="tune")
 def main(config: DictConfig) -> None:
     configure_logging(paths.LOGS_DIR / "tune.log")
 

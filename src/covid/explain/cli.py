@@ -2,9 +2,9 @@ from pathlib import Path
 
 import typer
 
-from covid import paths
-from covid.experiments.explain import ExplainingSpec, WandbExplainingTracker
-from covid.experiments.explain import explain as run_explain
+from covid.common import paths
+from covid.explain import ExplainingSpec, WandbExplainingTracker
+from covid.explain import explain as run_explain
 
 
 def main() -> None:

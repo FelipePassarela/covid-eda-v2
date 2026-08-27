@@ -2,10 +2,10 @@ from pathlib import Path
 
 import typer
 
-from covid import paths
-from covid.cli.logging import configure_logging
-from covid.experiments.eval import WandBEvaluationTracker
-from covid.experiments.eval import evaluate as run_evaluation
+from covid.common import paths
+from covid.common.logging import configure_logging
+from covid.eval import WandBEvaluationTracker
+from covid.eval import evaluate as run_evaluation
 
 
 def main() -> None:

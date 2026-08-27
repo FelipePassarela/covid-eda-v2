@@ -1,7 +1,7 @@
 from typing import Protocol
 
-from covid.experiments.explain.result import ExplainingResult
-from covid.experiments.explain.spec import ExplainingSpec
+from covid.explain.result import ExplainingResult
+from covid.explain.spec import ExplainingSpec
 
 
 class ExplainingTracker(Protocol):
