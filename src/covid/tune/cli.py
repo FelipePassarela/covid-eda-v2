@@ -20,7 +20,7 @@ def main(config: DictConfig) -> None:
 
 
 def create_spec(config: DictConfig) -> TuningSpec:
-    pipeline = instantiate(config.pipeline)
+    pipeline = instantiate(config.pipeline, _convert_="all")
     param_distributions = instantiate(config.param_distributions, _convert_="all")
 
     logger.debug("Pipeline to tune: {}", pipeline)
@@ -44,8 +44,7 @@ def run_tuning(spec: TuningSpec, config: DictConfig) -> None:
         config=prepare_config_for_wandb(config), run_name=spec.name
     )
     with tracker:
-        result = tune(spec)
-        tracker.track_search(spec, result)
+        tune(spec, tracker)
 
 
 def prepare_config_for_wandb(config: DictConfig) -> dict[str, Any]:

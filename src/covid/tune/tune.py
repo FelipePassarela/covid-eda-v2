@@ -5,9 +5,17 @@ from covid.common import constants
 from covid.common.data import load_and_split_data
 from covid.tune.result import TuningResult
 from covid.tune.spec import TuningSpec
+from covid.tune.tracking import TuningTracker
 
 
-def tune(spec: TuningSpec) -> TuningResult:
+def tune(spec: TuningSpec, tracker: TuningTracker) -> TuningResult:
+    tracker.track_spec(spec)
+    result = _tune(spec)
+    tracker.track_result(result)
+    return result
+
+
+def _tune(spec: TuningSpec) -> TuningResult:
     X, y = load_and_split_data(spec.data_path)
     search = _create_search(spec)
     search.fit(X, y)
