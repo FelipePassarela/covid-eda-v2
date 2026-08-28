@@ -7,7 +7,7 @@ from sklearn.model_selection import RandomizedSearchCV
 
 
 @dataclass(frozen=True)
-class HyperparameterSearchResult:
+class TuningResult:
     best_estimator: BaseEstimator
     best_params: dict[str, Any]
     best_score: float
@@ -19,9 +19,7 @@ class HyperparameterSearchResult:
             best_estimator=search.best_estimator_,
             best_params=search.best_params_,
             best_score=search.best_score_,
-            report=HyperparameterSearchResult.report_from_cv_results(
-                search.cv_results_
-            ),
+            report=TuningResult.report_from_cv_results(search.cv_results_),
         )
 
     @staticmethod

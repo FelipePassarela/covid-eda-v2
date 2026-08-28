@@ -7,7 +7,7 @@ from omegaconf import DictConfig, OmegaConf
 
 from covid.common import paths
 from covid.common.logging import configure_logging, log_config
-from covid.tune import RandomizedSearchSpec, search_hyperparameters
+from covid.tune import TuningSpec, tune
 from covid.tune.tracking import WAndBTuningTracker
 
 
@@ -15,18 +15,18 @@ from covid.tune.tracking import WAndBTuningTracker
 def main(config: DictConfig) -> None:
     configure_logging(paths.LOGS_DIR / "tune.log")
 
-    search_spec = create_search_spec(config)
-    run_tuning(search_spec, config)
+    spec = create_spec(config)
+    run_tuning(spec, config)
 
 
-def create_search_spec(config: DictConfig) -> RandomizedSearchSpec:
+def create_spec(config: DictConfig) -> TuningSpec:
     pipeline = instantiate(config.pipeline)
     param_distributions = instantiate(config.param_distributions, _convert_="all")
 
     logger.debug("Pipeline to tune: {}", pipeline)
     logger.debug("Parameter distributions to tune: {}", param_distributions)
 
-    return RandomizedSearchSpec(
+    return TuningSpec(
         name=config.name,
         pipeline=pipeline,
         param_distributions=param_distributions,
@@ -37,14 +37,14 @@ def create_search_spec(config: DictConfig) -> RandomizedSearchSpec:
     )
 
 
-def run_tuning(spec: RandomizedSearchSpec, config: DictConfig) -> None:
+def run_tuning(spec: TuningSpec, config: DictConfig) -> None:
     log_config(config)
 
     tracker = WAndBTuningTracker(
         config=prepare_config_for_wandb(config), run_name=spec.name
     )
     with tracker:
-        result = search_hyperparameters(spec)
+        result = tune(spec)
         tracker.track_search(spec, result)
 
 

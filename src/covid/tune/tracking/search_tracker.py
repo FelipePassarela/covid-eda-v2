@@ -1,9 +1,7 @@
 from typing import Protocol
 
-from covid.tune import HyperparameterSearchResult, RandomizedSearchSpec
+from covid.tune import TuningResult, TuningSpec
 
 
 class HyperparameterSearchTracker(Protocol):
-    def track_search(
-        self, spec: RandomizedSearchSpec, result: HyperparameterSearchResult
-    ) -> None: ...
+    def track_search(self, spec: TuningSpec, result: TuningResult) -> None: ...

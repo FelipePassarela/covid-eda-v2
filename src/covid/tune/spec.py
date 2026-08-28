@@ -12,7 +12,7 @@ from pydantic import (
 )
 
 
-class RandomizedSearchSpec(BaseModel):
+class TuningSpec(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True, extra="forbid", validate_assignment=True
     )

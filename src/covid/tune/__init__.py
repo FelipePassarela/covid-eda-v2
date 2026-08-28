@@ -1,9 +1,5 @@
-from .search import search_hyperparameters
-from .search_result import HyperparameterSearchResult
-from .search_spec import RandomizedSearchSpec
+from .result import TuningResult
+from .spec import TuningSpec
+from .tune import tune
 
-__all__ = [
-    "HyperparameterSearchResult",
-    "RandomizedSearchSpec",
-    "search_hyperparameters",
-]
+__all__ = ["TuningResult", "TuningSpec", "tune"]

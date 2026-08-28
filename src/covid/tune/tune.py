@@ -3,18 +3,18 @@ from sklearn.model_selection import RandomizedSearchCV, RepeatedStratifiedKFold
 
 from covid.common import constants
 from covid.common.data import load_and_split_data
-from covid.tune.search_result import HyperparameterSearchResult
-from covid.tune.search_spec import RandomizedSearchSpec
+from covid.tune.result import TuningResult
+from covid.tune.spec import TuningSpec
 
 
-def search_hyperparameters(spec: RandomizedSearchSpec) -> HyperparameterSearchResult:
+def tune(spec: TuningSpec) -> TuningResult:
     X, y = load_and_split_data(spec.data_path)
     search = _create_search(spec)
     search.fit(X, y)
-    return HyperparameterSearchResult.from_fitted_search(search)
+    return TuningResult.from_fitted_search(search)
 
 
-def _create_search(spec: RandomizedSearchSpec) -> RandomizedSearchCV:
+def _create_search(spec: TuningSpec) -> RandomizedSearchCV:
     cv = RepeatedStratifiedKFold(
         n_splits=5, n_repeats=spec.n_fold_repeats, random_state=constants.RANDOM_STATE
     )

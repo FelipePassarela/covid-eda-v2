@@ -4,7 +4,7 @@ from typing import Any, Self
 import pandas as pd
 
 import wandb
-from covid.tune import HyperparameterSearchResult, RandomizedSearchSpec
+from covid.tune import TuningResult, TuningSpec
 
 
 class WAndBTuningTracker:
@@ -26,9 +26,7 @@ class WAndBTuningTracker:
         if self._run:
             self._run.finish()
 
-    def track_search(
-        self, spec: RandomizedSearchSpec, result: HyperparameterSearchResult
-    ) -> None:
+    def track_search(self, spec: TuningSpec, result: TuningResult) -> None:
         if not self._run:
             raise RuntimeError("This class must be used as a context manager.")
 
@@ -40,7 +38,7 @@ class WAndBTuningTracker:
             {"results": WAndBTuningTracker._to_wandb_table(result.report, spec.name)}
         )
 
-    def track_spec(self, spec: RandomizedSearchSpec) -> None: ...
+    def track_spec(self, spec: TuningSpec) -> None: ...
 
     @classmethod
     def _to_wandb_table(cls, dataframe: pd.DataFrame, spec_name: str) -> wandb.Table:
