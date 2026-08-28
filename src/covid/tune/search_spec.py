@@ -5,6 +5,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    FilePath,
     PositiveInt,
     field_serializer,
     model_validator,
@@ -24,6 +25,7 @@ class RandomizedSearchSpec(BaseModel):
     scoring: list[str] = Field(
         default_factory=lambda: ["balanced_accuracy"], min_length=1
     )
+    data_path: FilePath
 
     @model_validator(mode="after")
     def validate_parameter_names(self) -> Self:

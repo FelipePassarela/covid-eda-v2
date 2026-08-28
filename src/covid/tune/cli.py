@@ -1,15 +1,11 @@
-from pathlib import Path
 from typing import Any, cast
 
 import hydra
-import pandas as pd
 from hydra.utils import instantiate
 from loguru import logger
 from omegaconf import DictConfig, OmegaConf
 
-import wandb
 from covid.common import paths
-from covid.common.data import load_and_split_data
 from covid.common.logging import configure_logging, log_config
 from covid.tune import RandomizedSearchSpec, search_hyperparameters
 from covid.tune.tracking import WAndBTuningTracker
@@ -19,9 +15,8 @@ from covid.tune.tracking import WAndBTuningTracker
 def main(config: DictConfig) -> None:
     configure_logging(paths.LOGS_DIR / "tune.log")
 
-    X_train, y_train = load_and_split_data(Path(config.train_data_path))
     search_spec = create_search_spec(config)
-    run_tuning(X_train, y_train, search_spec, config)
+    run_tuning(search_spec, config)
 
 
 def create_search_spec(config: DictConfig) -> RandomizedSearchSpec:
@@ -31,35 +26,26 @@ def create_search_spec(config: DictConfig) -> RandomizedSearchSpec:
     logger.debug("Pipeline to tune: {}", pipeline)
     logger.debug("Parameter distributions to tune: {}", param_distributions)
 
-    search_spec = RandomizedSearchSpec(
+    return RandomizedSearchSpec(
         name=config.name,
         pipeline=pipeline,
         param_distributions=param_distributions,
         n_searches=config.n_searches,
         n_fold_repeats=config.n_fold_repeats,
         scoring=config.scoring,
+        data_path=config.data_path,
     )
-    logger.debug("Search specification: {}", search_spec)
-
-    return search_spec
 
 
-def run_tuning(
-    X_train: pd.DataFrame,
-    y_train: pd.Series,
-    spec: RandomizedSearchSpec,
-    config: DictConfig,
-) -> None:
+def run_tuning(spec: RandomizedSearchSpec, config: DictConfig) -> None:
     log_config(config)
 
-    with wandb.init(
-        project="covid",
-        name=spec.name,
-        job_type="tuning",
-        config=prepare_config_for_wandb(config),
-    ) as run:
-        result = search_hyperparameters(X_train, y_train, spec=spec)
-        WAndBTuningTracker(run).track_search(spec, result)
+    tracker = WAndBTuningTracker(
+        config=prepare_config_for_wandb(config), run_name=spec.name
+    )
+    with tracker:
+        result = search_hyperparameters(spec)
+        tracker.track_search(spec, result)
 
 
 def prepare_config_for_wandb(config: DictConfig) -> dict[str, Any]:

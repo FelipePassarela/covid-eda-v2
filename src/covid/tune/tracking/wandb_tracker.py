@@ -1,5 +1,5 @@
 import json
-from typing import Any
+from typing import Any, Self
 
 import pandas as pd
 
@@ -8,17 +8,35 @@ from covid.tune import HyperparameterSearchResult, RandomizedSearchSpec
 
 
 class WAndBTuningTracker:
-    def __init__(self, run: wandb.Run) -> None:
-        self.run = run
+    def __init__(self, config: dict[str, Any], run_name: str | None = None) -> None:
+        self._run_name = run_name
+        self._run: wandb.Run | None = None
+        self._config = config
+
+    def __enter__(self) -> Self:
+        self._run: wandb.Run = wandb.init(
+            project="covid",
+            name=self._run_name,
+            job_type="tuning",
+            config=self._config,
+        )
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        if self._run:
+            self._run.finish()
 
     def track_search(
         self, spec: RandomizedSearchSpec, result: HyperparameterSearchResult
     ) -> None:
-        self.run.summary["best_score"] = result.best_score
-        self.run.summary["best_params"] = WAndBTuningTracker._make_serializable(
+        if not self._run:
+            raise RuntimeError("This class must be used as a context manager.")
+
+        self._run.summary["best_score"] = result.best_score
+        self._run.summary["best_params"] = WAndBTuningTracker._make_serializable(
             result.best_params
         )
-        self.run.log(
+        self._run.log(
             {"results": WAndBTuningTracker._to_wandb_table(result.report, spec.name)}
         )
 
