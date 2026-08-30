@@ -15,17 +15,20 @@ class TuningResult:
 
     @classmethod
     def from_fitted_search(cls, search: RandomizedSearchCV) -> Self:
+        report = TuningResult.report_from_cv_results(
+            search.cv_results_, sort_by=search.scoring[0]
+        )
         return cls(
             best_estimator=search.best_estimator_,
             best_params=search.best_params_,
             best_score=search.best_score_,
-            report=TuningResult.report_from_cv_results(search.cv_results_),
+            report=report,
         )
 
     @staticmethod
     def report_from_cv_results(
         cv_results: dict[str, Any],
-        sort_by: str = "balanced_accuracy",
+        sort_by: str | None = None,
         include_std: bool = False,
     ) -> pd.DataFrame:
         results = pd.DataFrame(cv_results)
@@ -50,7 +53,7 @@ class TuningResult:
                 if column is not None and column in results.columns
             )
 
-        sort_column = f"mean_test_{sort_by}"
+        sort_column = f"mean_test_{sort_by}" if sort_by is not None else cv_cols[1]
 
         return (
             results[cv_cols]
