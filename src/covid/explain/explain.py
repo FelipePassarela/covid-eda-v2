@@ -19,7 +19,7 @@ def explain(spec: ExplainingSpec, tracker: ExplainingTracker) -> None:
     tracker.track_spec(spec)
     result = _explain(spec)
     tracker.track_result(result)
-    plt.close(result.beeswarm_plot)
+    result.close_plot()
 
 
 def _explain(spec: ExplainingSpec) -> ExplainingResult:

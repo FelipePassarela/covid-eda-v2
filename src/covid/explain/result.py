@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 from imblearn.pipeline import Pipeline
+from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from shap import Explanation
 
@@ -14,3 +15,6 @@ class ExplainingResult:
     explanation: Explanation
     importances: pd.DataFrame
     beeswarm_plot: Figure
+
+    def close_plot(self) -> None:
+        plt.close(self.beeswarm_plot)
