@@ -26,8 +26,8 @@ def _explain(spec: ExplainingSpec) -> ExplainingResult:
     pipeline = load_pipeline(spec.pipeline_path)
     preprocessor, classifier = split_pipeline(pipeline)
 
-    X_train_transformed = load_and_transform_features(preprocessor, spec.train_path)
-    X_test_transformed = load_and_transform_features(preprocessor, spec.test_path)
+    X_train_transformed = load_and_transform_features(spec.train_path, preprocessor)
+    X_test_transformed = load_and_transform_features(spec.test_path, preprocessor)
 
     explanation = create_shap_explanation(
         X_train_transformed, X_test_transformed, classifier

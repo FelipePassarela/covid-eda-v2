@@ -14,7 +14,7 @@ def load_pipeline(pipeline_path: Path) -> Pipeline:
 
 
 def load_and_transform_features(
-    preprocessor: Pipeline, data_path: Path
+    data_path: Path, preprocessor: Pipeline
 ) -> pd.DataFrame:
     X_train, _ = load_and_split_data(data_path)
     return preprocessor.transform(X_train)
