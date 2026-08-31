@@ -40,9 +40,9 @@ def assert_result(result: TuningResult, spec: TuningSpec) -> None:
     assert result.best_params["clf__strategy"] in ["most_frequent", "stratified"]
     assert 0.0 <= result.best_score <= 1.0
 
-    assert isinstance(result.report, pd.DataFrame)
-    assert len(result.report) == spec.n_searches
-    assert f"mean_test_{spec.scoring[0]}" in result.report.columns
+    assert isinstance(result.cv_report, pd.DataFrame)
+    assert len(result.cv_report) == spec.n_searches
+    assert f"mean_test_{spec.scoring[0]}" in result.cv_report.columns
 
 
 def assert_mocks_called(

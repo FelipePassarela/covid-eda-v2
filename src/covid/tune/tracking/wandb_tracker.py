@@ -65,11 +65,11 @@ class WAndBTuningTracker:
             raise RuntimeError("This class must be used as a context manager.")
 
         best_params = WAndBTuningTracker._make_serializable(result.best_params)
-        result_table = WAndBTuningTracker._to_wandb_table(result.report)
+        cv_report = WAndBTuningTracker._to_wandb_table(result.cv_report)
 
         self._run.summary["result/best_score"] = result.best_score
         self._run.summary["result/best_params"] = best_params
-        self._run.log({"result/results": result_table})
+        self._run.log({"result/cv_report": cv_report})
 
     @classmethod
     def _to_wandb_table(cls, dataframe: pd.DataFrame) -> wandb.Table:
