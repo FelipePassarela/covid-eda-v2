@@ -23,7 +23,7 @@ def main(config: DictConfig) -> None:
 def create_spec(config: DictConfig) -> NestedTuningSpec:
     return NestedTuningSpec(
         inner=tuning_spec_from_config(config.inner_search),
-        outer_n_splits=config.outer_n_splits,
+        n_outer_splits=config.n_outer_splits,
     )
 
 

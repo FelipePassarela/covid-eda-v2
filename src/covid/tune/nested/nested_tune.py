@@ -11,17 +11,20 @@ from covid.tune.nested.result import NestedTuningResult
 from covid.tune.nested.tracking import NestedTuningTracker
 
 
-def nested_tune(spec: NestedTuningSpec, tracker: NestedTuningTracker) -> None:
+def nested_tune(
+    spec: NestedTuningSpec, tracker: NestedTuningTracker
+) -> NestedTuningResult:
     tracker.track_spec(spec)
     result = _nested_tune(spec)
     tracker.track_result(result)
+    return result
 
 
 def _nested_tune(spec: NestedTuningSpec) -> NestedTuningResult:
     X, y = load_and_split_data(spec.inner.data_path)
 
     inner_search = _create_inner_search(spec.inner)
-    outer_cv = _create_outer_cv(spec.outer_n_splits)
+    outer_cv = _create_outer_cv(spec.n_outer_splits)
     nested_scores = _run_nested_cv(X, y, inner_search, outer_cv)
 
     return NestedTuningResult.from_nested_scores(nested_scores)

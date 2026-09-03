@@ -31,7 +31,7 @@ class WandBNestedTuningTracker:
             raise RuntimeError("This class must be used as a context manager.")
 
         WAndBTuningTracker.track_spec_for_run(self._run, spec.inner, group="inner")
-        self._run.config["outer/n_splits"] = spec.outer_n_splits
+        self._run.config["outer/n_splits"] = spec.n_outer_splits
 
     def track_result(self, result: NestedTuningResult) -> None:
         if not self._run:

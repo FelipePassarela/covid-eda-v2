@@ -2,7 +2,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from covid.tune import TuningSpec, tune
-from tests.integration.tune.conftest import assert_mocks_called, assert_result
+from tests.integration.tune.base.conftest import assert_mocks_called, assert_result
 
 
 def test_tune_succeeds_with_synthetic_data(spec: TuningSpec, tmp_path: Path) -> None:
