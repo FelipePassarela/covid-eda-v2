@@ -47,7 +47,8 @@ dev = [
 
 [project.scripts]
 split = "covid.ingest.split_data:main"
-tune = "covid.tune.cli:main"
+tune = "covid.tune.base.cli:main"
+ntune = "covid.tune.nested.cli:main"
 train = "covid.train.cli:main"
 eval = "covid.eval.cli:main"
 explain = "covid.explain.cli:main"

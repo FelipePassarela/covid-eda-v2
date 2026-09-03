@@ -1,6 +1,6 @@
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).parent.parent.parent
+ROOT_DIR = Path(__file__).parent.parent.parent.parent
 
 DATA_DIR = ROOT_DIR / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"
@@ -13,3 +13,6 @@ INTERIM_TEST_DATA_PATH = INTERIM_DATA_DIR / "test.csv"
 
 LOGS_DIR = ROOT_DIR / "logs"
 MODELS_DIR = ROOT_DIR / "models"
+
+PACKAGE_DIR = ROOT_DIR / "src" / "covid"
+CONF_DIR = PACKAGE_DIR / "conf"

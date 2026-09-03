@@ -1,22 +1,3 @@
 defaults:
-  - pipeline: dummy
+  - search@_global_: dummy
   - _self_
-
-name: tune-${hydra:runtime.choices.pipeline}
-data_path: data/interim/train.csv
-
-n_searches: 4
-n_fold_repeats: 1
-
-scoring:
-  - balanced_accuracy
-  - f1
-  - precision
-  - recall
-
-param_distributions:
-  classifier__strategy:
-    - most_frequent
-    - stratified
-    - uniform
-    - constant

@@ -21,6 +21,7 @@ class TuningSpec(BaseModel):
     pipeline: Pipeline
     param_distributions: dict[str, Any] = Field(min_length=1)
     n_searches: PositiveInt
+    n_splits: PositiveInt = 5
     n_fold_repeats: PositiveInt = 5
     scoring: list[str] = Field(
         default_factory=lambda: ["balanced_accuracy"], min_length=1

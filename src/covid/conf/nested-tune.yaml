@@ -1,0 +1,6 @@
+defaults:
+  - search@inner_search: dummy
+  - _self_
+
+name: nested-tune-${hydra:runtime.choices.search@inner_search}
+n_outer_splits: 2
