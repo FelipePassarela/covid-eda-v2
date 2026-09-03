@@ -31,7 +31,3 @@ def run_nested_tune(spec: NestedTuningSpec, config: DictConfig) -> None:
     )
     with tracker:
         nested_tune(spec, tracker)
-
-
-if __name__ == "__main__":
-    main()

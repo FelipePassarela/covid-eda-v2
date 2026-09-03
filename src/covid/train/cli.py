@@ -53,7 +53,3 @@ def instantiate_model(config: DictConfig) -> Pipeline:
 
 def should_tune_threshold(config: DictConfig) -> bool:
     return config.tune_threshold
-
-
-if __name__ == "__main__":
-    main()

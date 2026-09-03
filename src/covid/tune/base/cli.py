@@ -25,7 +25,3 @@ def run_tuning(spec: TuningSpec, config: DictConfig) -> None:
     )
     with tracker:
         tune(spec, tracker)
-
-
-if __name__ == "__main__":
-    main()
