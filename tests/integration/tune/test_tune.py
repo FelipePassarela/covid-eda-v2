@@ -15,7 +15,7 @@ def test_tune_orchestrates_successfully() -> None:
     tracker = MagicMock()
     expected_result = MagicMock()
 
-    with patch("covid.tune.tune._tune", return_value=expected_result) as mock_tune:
+    with patch("covid.tune.base.tune._tune", return_value=expected_result) as mock_tune:
         result = tune(spec, tracker)
 
     assert_mocks_called(mock_tune, spec, tracker, expected_result)

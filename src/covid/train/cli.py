@@ -1,12 +1,11 @@
 from pathlib import Path
-from typing import Any, cast
 
 import hydra
 from hydra.utils import instantiate
 from imblearn.pipeline import Pipeline
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 
-from covid.common import paths
+from covid.common import paths, prepare_config_for_wandb
 from covid.common.logging import configure_logging, log_config
 from covid.train import (
     TrainingSpec,
@@ -35,13 +34,6 @@ def train(config: DictConfig) -> None:
             tune_threshold(spec, scoring=config.tuning_scoring)
         else:
             fit(spec)
-
-
-def prepare_config_for_wandb(config: DictConfig) -> dict[str, Any]:
-    return cast(
-        dict[str, Any],
-        OmegaConf.to_container(config, resolve=True, throw_on_missing=True),
-    )
 
 
 def create_train_spec(config: DictConfig, tracker: TrainingTracker) -> TrainingSpec:

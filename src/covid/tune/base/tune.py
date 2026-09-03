@@ -1,11 +1,14 @@
 from sklearn.callback import ProgressBar
-from sklearn.model_selection import RandomizedSearchCV, RepeatedStratifiedKFold
+from sklearn.model_selection import (
+    RandomizedSearchCV,
+    RepeatedStratifiedKFold,
+)
 
 from covid.common import constants
 from covid.common.data import load_and_split_data
-from covid.tune.result import TuningResult
-from covid.tune.spec import TuningSpec
-from covid.tune.tracking import TuningTracker
+from covid.tune.base import TuningResult
+from covid.tune.base.spec import TuningSpec
+from covid.tune.base.tracking import TuningTracker
 
 
 def tune(spec: TuningSpec, tracker: TuningTracker) -> TuningResult:
@@ -24,7 +27,9 @@ def _tune(spec: TuningSpec) -> TuningResult:
 
 def _create_search(spec: TuningSpec) -> RandomizedSearchCV:
     cv = RepeatedStratifiedKFold(
-        n_splits=5, n_repeats=spec.n_fold_repeats, random_state=constants.RANDOM_STATE
+        n_splits=spec.n_splits,
+        n_repeats=spec.n_fold_repeats,
+        random_state=constants.RANDOM_STATE,
     )
     search = RandomizedSearchCV(
         estimator=spec.pipeline,

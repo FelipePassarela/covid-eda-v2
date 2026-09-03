@@ -2,9 +2,9 @@ import json
 from typing import Any, Self
 
 import pandas as pd
-
 import wandb
-from covid.tune import TuningResult, TuningSpec
+
+from covid.tune.base import TuningResult, TuningSpec
 
 
 class WAndBTuningTracker:
@@ -30,33 +30,37 @@ class WAndBTuningTracker:
         if not self._run:
             raise RuntimeError("This class must be used as a context manager.")
 
-        param_dist = WAndBTuningTracker._make_serializable(spec.param_distributions)
-        pipeline = WAndBTuningTracker._make_serializable(spec.pipeline.steps)
+        WAndBTuningTracker.track_spec_for_run(self._run, spec)
 
-        self._run.summary.update(
+    @staticmethod
+    def track_spec_for_run(run: wandb.Run, spec: TuningSpec, group: str = "") -> None:
+        param_dist = WAndBTuningTracker.make_serializable(spec.param_distributions)
+        pipeline = WAndBTuningTracker.make_serializable(spec.pipeline.steps)
+
+        run.config.update(
             {
-                "data/path": spec.data_path,
-                "pipeline/steps": pipeline,
-                "search/param_distributions": param_dist,
-                "search/n_searches": spec.n_searches,
-                "search/n_fold_repeats": spec.n_fold_repeats,
-                "search/scoring": spec.scoring,
+                f"{group}/data/path": spec.data_path,
+                f"{group}/pipeline/steps": pipeline,
+                f"{group}/search/param_distributions": param_dist,
+                f"{group}/search/n_searches": spec.n_searches,
+                f"{group}/search/n_fold_repeats": spec.n_fold_repeats,
+                f"{group}/search/scoring": spec.scoring,
             }
         )
 
     @staticmethod
-    def _make_serializable(value: Any) -> Any:
+    def make_serializable(value: Any) -> Any:
         if value is None or isinstance(value, str | int | float | bool):
             return value
 
         if isinstance(value, dict):
             return {
-                str(key): WAndBTuningTracker._make_serializable(item)
+                str(key): WAndBTuningTracker.make_serializable(item)
                 for key, item in value.items()
             }
 
         if isinstance(value, list | tuple):
-            return [WAndBTuningTracker._make_serializable(item) for item in value]
+            return [WAndBTuningTracker.make_serializable(item) for item in value]
 
         return repr(value)
 
@@ -64,15 +68,15 @@ class WAndBTuningTracker:
         if not self._run:
             raise RuntimeError("This class must be used as a context manager.")
 
-        best_params = WAndBTuningTracker._make_serializable(result.best_params)
-        cv_report = WAndBTuningTracker._to_wandb_table(result.cv_report)
+        best_params = WAndBTuningTracker.make_serializable(result.best_params)
+        cv_report = WAndBTuningTracker.to_wandb_table(result.cv_report)
 
         self._run.summary["result/best_score"] = result.best_score
         self._run.summary["result/best_params"] = best_params
         self._run.log({"result/cv_report": cv_report})
 
     @classmethod
-    def _to_wandb_table(cls, dataframe: pd.DataFrame) -> wandb.Table:
+    def to_wandb_table(cls, dataframe: pd.DataFrame) -> wandb.Table:
         serializable = dataframe.reset_index().copy()
         serializable.drop("index", axis=1, inplace=True)
 
@@ -83,7 +87,7 @@ class WAndBTuningTracker:
 
     @classmethod
     def _make_table_cell(cls, value: Any) -> Any:
-        value = cls._make_serializable(value)
+        value = cls.make_serializable(value)
         if isinstance(value, (dict, list)):
             return json.dumps(value, sort_keys=True, ensure_ascii=False)
         return value

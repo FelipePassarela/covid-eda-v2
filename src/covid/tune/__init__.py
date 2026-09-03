@@ -1,5 +1,3 @@
-from .result import TuningResult
-from .spec import TuningSpec
-from .tune import tune
+from .base import TuningResult, TuningSpec, tune
 
 __all__ = ["TuningResult", "TuningSpec", "tune"]
