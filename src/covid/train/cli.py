@@ -16,7 +16,7 @@ from covid.train import (
 )
 
 
-@hydra.main(version_base=None, config_path="../conf", config_name="train")
+@hydra.main(version_base=None, config_path=str(paths.CONF_DIR), config_name="train")
 def main(config: DictConfig) -> None:
     configure_logging(paths.LOGS_DIR / "train.log")
     train(config)

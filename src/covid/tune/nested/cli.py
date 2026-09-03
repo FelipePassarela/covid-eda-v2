@@ -10,7 +10,9 @@ from covid.tune.nested.nested_tuning_spec import NestedTuningSpec
 from covid.tune.nested.tracking.wandb_nested_tracker import WandBNestedTuningTracker
 
 
-@hydra.main(version_base=None, config_path="../../conf", config_name="nested-tune")
+@hydra.main(
+    version_base=None, config_path=str(paths.CONF_DIR), config_name="nested-tune"
+)
 def main(config: DictConfig) -> None:
     configure_logging(paths.LOGS_DIR / "nested-tune.log")
 

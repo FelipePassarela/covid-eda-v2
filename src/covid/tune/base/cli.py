@@ -9,7 +9,7 @@ from covid.tune.base.config_adapter import tuning_spec_from_config
 from covid.tune.base.tracking import WAndBTuningTracker
 
 
-@hydra.main(version_base=None, config_path="../../conf", config_name="tune")
+@hydra.main(version_base=None, config_path=str(paths.CONF_DIR), config_name="tune")
 def main(config: DictConfig) -> None:
     configure_logging(paths.LOGS_DIR / "tune.log")
 
