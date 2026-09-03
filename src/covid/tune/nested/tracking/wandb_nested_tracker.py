@@ -1,8 +1,8 @@
 from typing import Any, Self
 
 import wandb
-
 from covid.tune.base.tracking import WAndBTuningTracker
+from covid.tune.common.wand_utils import make_serializable, to_wandb_table
 from covid.tune.nested.nested_tuning_spec import NestedTuningSpec
 from covid.tune.nested.result.nested_result import NestedTuningResult
 
@@ -43,11 +43,7 @@ class WandBNestedTuningTracker:
                 "result/mean_train_scores": result.mean_train_scores,
                 "result/std_test_scores": result.std_test_scores,
                 "result/std_train_scores": result.std_train_scores,
-                "result/params_per_fold": WAndBTuningTracker.make_serializable(
-                    result.params_per_fold
-                ),
+                "result/params_per_fold": make_serializable(result.params_per_fold),
             }
         )
-        self._run.log(
-            {"result/outer_cv_report": WAndBTuningTracker.to_wandb_table(result.cv_report)}
-        )
+        self._run.log({"result/outer_cv_report": to_wandb_table(result.cv_report)})

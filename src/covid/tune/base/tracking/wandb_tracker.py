@@ -1,10 +1,8 @@
-import json
 from typing import Any, Self
 
-import pandas as pd
 import wandb
-
 from covid.tune.base import TuningResult, TuningSpec
+from covid.tune.common.wand_utils import make_serializable, to_wandb_table
 
 
 class WAndBTuningTracker:
@@ -34,8 +32,8 @@ class WAndBTuningTracker:
 
     @staticmethod
     def track_spec_for_run(run: wandb.Run, spec: TuningSpec, group: str = "") -> None:
-        param_dist = WAndBTuningTracker.make_serializable(spec.param_distributions)
-        pipeline = WAndBTuningTracker.make_serializable(spec.pipeline.steps)
+        param_dist = make_serializable(spec.param_distributions)
+        pipeline = make_serializable(spec.pipeline.steps)
 
         run.config.update(
             {
@@ -48,46 +46,13 @@ class WAndBTuningTracker:
             }
         )
 
-    @staticmethod
-    def make_serializable(value: Any) -> Any:
-        if value is None or isinstance(value, str | int | float | bool):
-            return value
-
-        if isinstance(value, dict):
-            return {
-                str(key): WAndBTuningTracker.make_serializable(item)
-                for key, item in value.items()
-            }
-
-        if isinstance(value, list | tuple):
-            return [WAndBTuningTracker.make_serializable(item) for item in value]
-
-        return repr(value)
-
     def track_result(self, result: TuningResult) -> None:
         if not self._run:
             raise RuntimeError("This class must be used as a context manager.")
 
-        best_params = WAndBTuningTracker.make_serializable(result.best_params)
-        cv_report = WAndBTuningTracker.to_wandb_table(result.cv_report)
+        best_params = make_serializable(result.best_params)
+        cv_report = to_wandb_table(result.cv_report)
 
         self._run.summary["result/best_score"] = result.best_score
         self._run.summary["result/best_params"] = best_params
         self._run.log({"result/cv_report": cv_report})
-
-    @classmethod
-    def to_wandb_table(cls, dataframe: pd.DataFrame) -> wandb.Table:
-        serializable = dataframe.reset_index().copy()
-        serializable.drop("index", axis=1, inplace=True)
-
-        for column in serializable.columns:
-            serializable[column] = serializable[column].map(cls._make_table_cell)
-
-        return wandb.Table(dataframe=serializable)
-
-    @classmethod
-    def _make_table_cell(cls, value: Any) -> Any:
-        value = cls.make_serializable(value)
-        if isinstance(value, (dict, list)):
-            return json.dumps(value, sort_keys=True, ensure_ascii=False)
-        return value
