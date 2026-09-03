@@ -3,7 +3,7 @@ from typing import Any, Self
 
 import pandas as pd
 
-from covid.tune.common.cv_report import NestedCVReport
+from covid.tune.nested.result.nested_cv_report import NestedCVReport
 
 
 @dataclass(frozen=True)

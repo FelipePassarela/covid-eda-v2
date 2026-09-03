@@ -7,8 +7,8 @@ from covid.common import constants
 from covid.common.data import load_and_split_data
 from covid.tune import TuningSpec
 from covid.tune.nested.nested_tuning_spec import NestedTuningSpec
-from covid.tune.nested.result.nested_result import NestedTuningResult
-from covid.tune.nested.tracking.nested_tuning_tracker import NestedTuningTracker
+from covid.tune.nested.result import NestedTuningResult
+from covid.tune.nested.tracking import NestedTuningTracker
 
 
 def nested_tune(spec: NestedTuningSpec, tracker: NestedTuningTracker) -> None:
@@ -50,10 +50,10 @@ def _create_outer_cv(outer_n_splits: int) -> StratifiedKFold:
 
 
 def _run_nested_cv(
-        X: pd.DataFrame,
-        y: pd.Series,
-        inner_search: RandomizedSearchCV,
-        outer_cv: StratifiedKFold,
+    X: pd.DataFrame,
+    y: pd.Series,
+    inner_search: RandomizedSearchCV,
+    outer_cv: StratifiedKFold,
 ) -> dict[str, Any]:
     return cross_validate(
         inner_search,

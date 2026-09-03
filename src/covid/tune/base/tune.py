@@ -6,7 +6,7 @@ from sklearn.model_selection import (
 
 from covid.common import constants
 from covid.common.data import load_and_split_data
-from covid.tune.base import TuningResult
+from covid.tune.base.result import TuningResult
 from covid.tune.base.spec import TuningSpec
 from covid.tune.base.tracking import TuningTracker
 

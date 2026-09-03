@@ -2,7 +2,7 @@ from typing import Any
 
 import pandas as pd
 
-from covid.tune.common.cv_report.fitted_search_cv import FittedSearchCV
+from covid.tune.common.cv_report import FittedSearchCV
 
 
 class NestedCVReport:
