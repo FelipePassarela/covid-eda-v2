@@ -3,4 +3,6 @@ defaults:
   - _self_
 
 name: nested-tune-${hydra:runtime.choices.search@inner_search}
-n_outer_splits: 2
+inner_search:
+  data_path: data/raw/longa_nao_vacinados.csv
+n_outer_splits: 5

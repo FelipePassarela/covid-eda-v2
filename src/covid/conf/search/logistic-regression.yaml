@@ -1,0 +1,37 @@
+defaults:
+  - /pipeline: logistic-regression
+  - _self_
+
+name: tune-${hydra:runtime.choices.pipeline}
+data_path: data/interim/train.csv
+
+n_splits: 5
+n_fold_repeats: 1
+n_searches: 10
+
+scoring:
+  - balanced_accuracy
+  - f1
+  - precision
+  - recall
+
+param_distributions:
+  selector__k:
+    - 10
+    - 15
+    - 30
+    - 50
+  classifier__l1_ratio:
+    - 0.0
+    - 0.1
+    - 0.5
+    - 1.0
+  classifier__C:
+    - 0.001
+    - 0.01
+    - 0.1
+    - 1.0
+  classifier__solver:
+    - liblinear
+    - saga
+    - lbfgs

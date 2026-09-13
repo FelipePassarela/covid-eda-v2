@@ -1,0 +1,62 @@
+defaults:
+  - /pipeline: lightgbm
+  - _self_
+
+data_path: data/interim/train.csv
+
+n_splits: 5
+n_fold_repeats: 1
+n_searches: 10
+
+scoring:
+  - balanced_accuracy
+  - f1
+  - precision
+  - recall
+
+param_distributions:
+  selector__k:
+    - 10
+    - 15
+    - 30
+    - 50
+  classifier__n_estimators:
+    - 30
+    - 50
+    - 100
+    - 300
+  classifier__max_depth:
+    - 2
+    - 3
+    - 4
+    - 6
+  classifier__learning_rate:
+    - 0.01
+    - 0.03
+    - 0.1
+  classifier__num_leaves:
+    - 15
+    - 31
+    - 63
+    - 127
+  classifier__min_child_samples:
+    - 5
+    - 10
+    - 20
+    - 30
+  classifier__subsample:
+    - 0.6
+    - 0.8
+    - 1.0
+  classifier__colsample_bytree:
+    - 0.6
+    - 0.8
+    - 1.0
+  classifier__reg_alpha:
+    - 0
+    - 0.1
+    - 1.0
+  classifier__reg_lambda:
+    - 0.1
+    - 1.0
+    - 5.0

@@ -1,0 +1,30 @@
+_target_: imblearn.pipeline.Pipeline
+steps:
+  - - column_dropper
+    - _target_: covid.feature.ColumnDropper
+      columns_to_drop:
+        - id
+
+  - - missing_rate_dropper
+    - _target_: covid.feature.HighMissingRateDropper
+      missing_threshold: 0.05
+
+  - - imputer
+    - _target_: sklearn.impute.SimpleImputer
+      strategy: most_frequent
+
+  - - selector
+    - _target_: sklearn.feature_selection.SelectKBest
+      score_func:
+        _target_: sklearn.feature_selection.chi2
+        _partial_: true
+
+  - - sampler
+    - _target_: imblearn.over_sampling.RandomOverSampler
+      random_state: 42
+
+  - - classifier
+    - _target_: xgboost.XGBClassifier
+      max_depth: 4
+      eval_metric: logloss
+      random_state: 42

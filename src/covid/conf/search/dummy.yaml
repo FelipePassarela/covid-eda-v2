@@ -2,12 +2,11 @@ defaults:
   - /pipeline: dummy
   - _self_
 
-name: tune-${hydra:runtime.choices.pipeline}
 data_path: data/interim/train.csv
 
-n_searches: 4
-n_splits: 3
+n_splits: 5
 n_fold_repeats: 1
+n_searches: 4
 
 scoring:
   - balanced_accuracy

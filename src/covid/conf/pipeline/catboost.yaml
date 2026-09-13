@@ -13,33 +13,22 @@ steps:
     - _target_: sklearn.impute.SimpleImputer
       strategy: most_frequent
 
-  - - filter
+  - - selector
     - _target_: sklearn.feature_selection.SelectKBest
-      k: 50
       score_func:
         _target_: sklearn.feature_selection.chi2
         _partial_: true
-
-  - - selector
-    - _target_: sklearn.feature_selection.RFECV
-      estimator:
-        _target_: sklearn.linear_model.LogisticRegression
-        solver: lbfgs
-        C: 0.001
-        random_state: 42
-        max_iter: 5000
-      min_features_to_select: 10
-
-  - - scaler
-    - _target_: sklearn.preprocessing.StandardScaler
 
   - - sampler
     - _target_: imblearn.over_sampling.RandomOverSampler
       random_state: 42
 
   - - classifier
-    - _target_: sklearn.linear_model.LogisticRegression
-      solver: lbfgs
-      C: 0.001
+    - _target_: catboost.CatBoostClassifier
+      n_estimators: 100
+      learning_rate: 0.03
+      depth: 4
+      l2_leaf_reg: 3
+      rsm: 0.8
       random_state: 42
-      max_iter: 5000
+      verbose: False
