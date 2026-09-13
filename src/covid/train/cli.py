@@ -1,12 +1,11 @@
 from pathlib import Path
 
 import hydra
-from hydra.utils import instantiate
-from imblearn.pipeline import Pipeline
 from omegaconf import DictConfig
 
 from covid.common import paths, prepare_config_for_wandb
 from covid.common.logging import configure_logging, log_config
+from covid.common.pipeline import build_pipeline_from_config
 from covid.train import (
     TrainingSpec,
     TrainingTracker,
@@ -38,17 +37,11 @@ def train(config: DictConfig) -> None:
 
 def create_train_spec(config: DictConfig, tracker: TrainingTracker) -> TrainingSpec:
     return TrainingSpec(
-        model=instantiate_model(config),
+        model=build_pipeline_from_config(config),
         data_path=Path(config.train_data_path),
         model_output_path=Path(config.output_path),
         tracker=tracker,
     )
-
-
-def instantiate_model(config: DictConfig) -> Pipeline:
-    model: Pipeline = instantiate(config.pipeline)
-    model.set_output(transform="pandas")
-    return model
 
 
 def should_tune_threshold(config: DictConfig) -> bool:

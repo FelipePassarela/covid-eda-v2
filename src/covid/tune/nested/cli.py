@@ -4,7 +4,7 @@ from omegaconf import DictConfig
 from covid.common import paths
 from covid.common.config_adapter import prepare_config_for_wandb
 from covid.common.logging import configure_logging
-from covid.tune.base.config_adapter import tuning_spec_from_config
+from covid.tune.base.spec_factory import tuning_spec_from_config
 from covid.tune.nested.nested_tune import nested_tune
 from covid.tune.nested.nested_tuning_spec import NestedTuningSpec
 from covid.tune.nested.tracking.wandb_nested_tracker import WandBNestedTuningTracker

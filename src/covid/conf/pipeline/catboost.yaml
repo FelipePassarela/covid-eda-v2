@@ -1,34 +1,13 @@
-_target_: imblearn.pipeline.Pipeline
-steps:
-  - - column_dropper
-    - _target_: covid.feature.ColumnDropper
-      columns_to_drop:
-        - id
+defaults:
+  - preprocessor: tree
+  - _self_
 
-  - - missing_rate_dropper
-    - _target_: covid.feature.HighMissingRateDropper
-      missing_threshold: 0.05
-
-  - - imputer
-    - _target_: sklearn.impute.SimpleImputer
-      strategy: most_frequent
-
-  - - selector
-    - _target_: sklearn.feature_selection.SelectKBest
-      score_func:
-        _target_: sklearn.feature_selection.chi2
-        _partial_: true
-
-  - - sampler
-    - _target_: imblearn.over_sampling.RandomOverSampler
-      random_state: 42
-
-  - - classifier
-    - _target_: catboost.CatBoostClassifier
-      n_estimators: 100
-      learning_rate: 0.03
-      depth: 4
-      l2_leaf_reg: 3
-      rsm: 0.8
-      random_state: 42
-      verbose: False
+classifier:
+  _target_: catboost.CatBoostClassifier
+  n_estimators: 100
+  learning_rate: 0.03
+  depth: 4
+  l2_leaf_reg: 3
+  rsm: 0.8
+  random_state: 42
+  verbose: False

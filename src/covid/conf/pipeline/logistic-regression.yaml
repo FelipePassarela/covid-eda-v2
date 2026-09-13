@@ -1,32 +1,8 @@
-_target_: imblearn.pipeline.Pipeline
-steps:
-  - - column_dropper
-    - _target_: covid.feature.ColumnDropper
-      columns_to_drop:
-        - id
+defaults:
+  - preprocessor: linear
+  - _self_
 
-  - - missing_rate_dropper
-    - _target_: covid.feature.HighMissingRateDropper
-      missing_threshold: 0.05
-
-  - - imputer
-    - _target_: sklearn.impute.SimpleImputer
-      strategy: most_frequent
-
-  - - selector
-    - _target_: sklearn.feature_selection.SelectKBest
-      score_func:
-        _target_: sklearn.feature_selection.chi2
-        _partial_: true
-
-  - - scaler
-    - _target_: sklearn.preprocessing.StandardScaler
-
-  - - sampler
-    - _target_: imblearn.over_sampling.RandomOverSampler
-      random_state: 42
-
-  - - classifier
-    - _target_: sklearn.linear_model.LogisticRegression
-      random_state: 42
-      max_iter: 5000
+classifier:
+  _target_: sklearn.linear_model.LogisticRegression
+  random_state: 42
+  max_iter: 5000

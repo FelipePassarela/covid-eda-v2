@@ -2,11 +2,12 @@ from hydra.utils import instantiate
 from loguru import logger
 from omegaconf import DictConfig
 
+from covid.common.pipeline import build_pipeline_from_config
 from covid.tune import TuningSpec
 
 
 def tuning_spec_from_config(config: DictConfig) -> TuningSpec:
-    pipeline = instantiate(config.pipeline, _convert_="all")
+    pipeline = build_pipeline_from_config(config)
     param_distributions = instantiate(config.param_distributions, _convert_="all")
 
     logger.debug("Pipeline to tune: {}", pipeline)

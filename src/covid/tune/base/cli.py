@@ -5,7 +5,7 @@ from covid.common import paths
 from covid.common.config_adapter import prepare_config_for_wandb
 from covid.common.logging import configure_logging, log_config
 from covid.tune.base import TuningSpec, tune
-from covid.tune.base.config_adapter import tuning_spec_from_config
+from covid.tune.base.spec_factory import tuning_spec_from_config
 from covid.tune.base.tracking import WAndBTuningTracker
 
 

@@ -1,5 +1,5 @@
 defaults:
-  - pipeline: lr-selectk-rfecv
+  - pipeline: dummy
   - _self_
 
 name: train-${hydra:runtime.choices.pipeline}
