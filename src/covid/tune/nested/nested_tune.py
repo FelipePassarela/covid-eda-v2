@@ -1,6 +1,7 @@
 from typing import Any
 
 import pandas as pd
+from loguru import logger
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, cross_validate
 
 from covid.common import constants
@@ -58,6 +59,11 @@ def _run_nested_cv(
     inner_search: RandomizedSearchCV,
     outer_cv: StratifiedKFold,
 ) -> dict[str, Any]:
+    logger.info(
+        "Running nested cross-validation with {} outer splits and {} inner splits",
+        outer_cv.get_n_splits(),
+        inner_search.cv.get_n_splits(),
+    )
     return cross_validate(
         inner_search,
         X,
