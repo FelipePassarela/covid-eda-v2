@@ -16,7 +16,6 @@ def spec(tmp_path: Path, classification_df: pd.DataFrame) -> TuningSpec:
     classifier = DummyClassifier(strategy="most_frequent")
 
     return TuningSpec(
-        name="test_tune",
         data_path=data_path,
         pipeline=Pipeline(steps=[("clf", classifier)]),
         param_distributions={"clf__strategy": ["most_frequent", "stratified"]},

@@ -20,8 +20,6 @@ def main(config: DictConfig) -> None:
 def run_tuning(spec: TuningSpec, config: DictConfig) -> None:
     log_config(config)
 
-    tracker = WAndBTuningTracker(
-        config=prepare_config_for_wandb(config), run_name=spec.name
-    )
+    tracker = WAndBTuningTracker(config=prepare_config_for_wandb(config))
     with tracker:
         tune(spec, tracker)

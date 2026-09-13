@@ -13,7 +13,6 @@ def tuning_spec_from_config(config: DictConfig) -> TuningSpec:
     logger.debug("Parameter distributions to tune: {}", param_distributions)
 
     return TuningSpec(
-        name=config.name,
         pipeline=pipeline,
         param_distributions=param_distributions,
         n_searches=config.n_searches,

@@ -17,7 +17,6 @@ class TuningSpec(BaseModel):
         arbitrary_types_allowed=True, extra="forbid", validate_assignment=True
     )
 
-    name: str = Field(min_length=1)
     pipeline: Pipeline
     param_distributions: dict[str, Any] = Field(min_length=1)
     n_searches: PositiveInt
