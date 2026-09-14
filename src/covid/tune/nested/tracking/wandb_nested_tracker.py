@@ -3,7 +3,7 @@ from typing import Any, Self
 import wandb
 from covid.tune.base.tracking import WAndBTuningTracker
 from covid.tune.common.wand_utils import make_serializable, to_wandb_table
-from covid.tune.nested.nested_tuning_spec import NestedTuningSpec
+from covid.tune.nested.spec import NestedTuningSpec
 from covid.tune.nested.result.nested_result import NestedTuningResult
 
 

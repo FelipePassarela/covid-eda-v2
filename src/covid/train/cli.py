@@ -1,18 +1,11 @@
-from pathlib import Path
-
 import hydra
 from omegaconf import DictConfig
 
 from covid.common import paths, prepare_config_for_wandb
 from covid.common.logging import configure_logging, log_config
-from covid.common.pipeline import build_pipeline_from_config
-from covid.train import (
-    TrainingSpec,
-    TrainingTracker,
-    WAndBTrainingTracker,
-    fit,
-    tune_threshold,
-)
+from covid.train import fit, tune_threshold
+from covid.train.spec_factory import training_spec_from_config
+from covid.train.wandb_tracker import WAndBTrainingTracker
 
 
 @hydra.main(version_base=None, config_path=str(paths.CONF_DIR), config_name="train")
@@ -28,20 +21,11 @@ def train(config: DictConfig) -> None:
     wandb_tracker = WAndBTrainingTracker(config=config_for_wandb)
 
     with wandb_tracker as tracker:
-        spec = create_train_spec(config, tracker)
+        spec = training_spec_from_config(config, tracker)
         if should_tune_threshold(config):
             tune_threshold(spec, scoring=config.tuning_scoring)
         else:
             fit(spec)
-
-
-def create_train_spec(config: DictConfig, tracker: TrainingTracker) -> TrainingSpec:
-    return TrainingSpec(
-        model=build_pipeline_from_config(config),
-        data_path=Path(config.train_data_path),
-        model_output_path=Path(config.output_path),
-        tracker=tracker,
-    )
 
 
 def should_tune_threshold(config: DictConfig) -> bool:

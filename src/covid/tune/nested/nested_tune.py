@@ -7,8 +7,8 @@ from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, cross_v
 from covid.common import constants
 from covid.common.data import load_and_split_data
 from covid.tune import TuningSpec
-from covid.tune.nested.nested_tuning_spec import NestedTuningSpec
 from covid.tune.nested.result import NestedTuningResult
+from covid.tune.nested.spec import NestedTuningSpec
 from covid.tune.nested.tracking import NestedTuningTracker
 
 

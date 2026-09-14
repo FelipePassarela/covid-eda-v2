@@ -4,9 +4,9 @@ from omegaconf import DictConfig
 from covid.common import paths
 from covid.common.config_adapter import prepare_config_for_wandb
 from covid.common.logging import configure_logging
-from covid.tune.base.spec_factory import tuning_spec_from_config
 from covid.tune.nested.nested_tune import nested_tune
-from covid.tune.nested.nested_tuning_spec import NestedTuningSpec
+from covid.tune.nested.spec import NestedTuningSpec
+from covid.tune.nested.spec_factory import nested_tuning_spec_from_config
 from covid.tune.nested.tracking.wandb_nested_tracker import WandBNestedTuningTracker
 
 
@@ -16,15 +16,8 @@ from covid.tune.nested.tracking.wandb_nested_tracker import WandBNestedTuningTra
 def main(config: DictConfig) -> None:
     configure_logging(paths.LOGS_DIR / "nested-tune.log")
 
-    spec = create_spec(config)
+    spec = nested_tuning_spec_from_config(config)
     run_nested_tune(spec, config)
-
-
-def create_spec(config: DictConfig) -> NestedTuningSpec:
-    return NestedTuningSpec(
-        inner=tuning_spec_from_config(config.inner_search),
-        n_outer_splits=config.n_outer_splits,
-    )
 
 
 def run_nested_tune(spec: NestedTuningSpec, config: DictConfig) -> None:

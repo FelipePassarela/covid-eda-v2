@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from covid.tune.nested.nested_tuning_spec import NestedTuningSpec
+from covid.tune.nested.spec import NestedTuningSpec
 from covid.tune.nested.result.nested_result import NestedTuningResult
 
 
