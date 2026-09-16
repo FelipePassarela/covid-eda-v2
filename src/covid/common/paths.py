@@ -13,6 +13,6 @@ INTERIM_TEST_DATA_PATH = INTERIM_DATA_DIR / "test.csv"
 
 LOGS_DIR = ROOT_DIR / "logs"
 MODELS_DIR = ROOT_DIR / "models"
-
+REPORTS_DIR = ROOT_DIR / "reports"
 PACKAGE_DIR = ROOT_DIR / "src" / "covid"
 CONF_DIR = PACKAGE_DIR / "conf"
