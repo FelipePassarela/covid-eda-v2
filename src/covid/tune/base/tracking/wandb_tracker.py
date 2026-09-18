@@ -6,8 +6,8 @@ from covid.tune.common.wand_utils import make_serializable, to_wandb_table
 
 
 class WAndBTuningTracker:
-    def __init__(self, config: dict[str, Any], run_name: str | None = None) -> None:
-        self._run_name = run_name
+    def __init__(self, config: dict[str, Any]) -> None:
+        self._run_name = config["name"]
         self._run: wandb.Run | None = None
         self._config = config
 
