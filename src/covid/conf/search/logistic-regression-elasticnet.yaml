@@ -1,6 +1,6 @@
 defaults:
   - /pipeline: logistic-regression
-  - override /pipeline/preprocessor: linear-mrmr
+  - override /pipeline/preprocessor: linear-selectk-elasticnet
   - _self_
 
 name: tune-${hydra:runtime.choices.pipeline}
@@ -23,10 +23,7 @@ param_distributions:
     - 25
     - 35
   classifier__solver:
-    - liblinear
-  classifier__l1_ratio:
-    - 0.0
-    - 1.0
+    - lbfgs
   classifier__C:
     - 0.001
     - 0.01
