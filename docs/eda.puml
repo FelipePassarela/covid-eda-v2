@@ -1,0 +1,9 @@
+@startuml
+package "EDA" {
+    - Validacao de Schema
+    - Avaliacao de Qualidade
+    - Analise Univariada
+    - Analise Bivariada
+    - Visualização de Embeddings
+}
+@enduml

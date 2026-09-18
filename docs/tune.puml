@@ -1,0 +1,36 @@
+@startuml
+title Tuning
+
+start
+partition "Setup" {
+- Carregar os dados
+- Instanciar pipeline
+:Instanciar distribuição
+de hiperparâmetros;
+
+:Configurar Randomized Search
+(RandomizedSearchCV);
+}
+
+- Executar Tuning
+
+partition "Randomized Search" {
+    repeat
+    :Selecionar combinação
+    de hiperparâmetros;
+
+    :Treinar e avaliar modelo
+    via validação cruzada;
+
+    repeat while (Ainda existem combinações\nde hiperparâmetros?) is (sim) not (não)
+}
+
+:Salvar melhor
+modelo (refit);
+
+:Registrar métricas
+de tuning;
+
+stop
+
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+title Nested Tuning
+
+start
+partition "Setup" {
+- Carregar os dados
+- Instanciar modelo
+:Instanciar distribuição
+de hiperparâmetros;
+
+:Configurar busca interna
+(RandomizedSearchCV);
+
+:Configurar validação externa
+(StratifiedKFold);
+}
+
+- Executar Nested Tuning
+
+partition "Validação Externa" {
+    repeat
+    - Holdout
+
+    partition "Busca Interna de\nHiperparâmetros" {
+        :Avaliar combinações
+        de hiperparâmetros;
+
+        :Selecionar melhores
+        hiperparâmetros;
+
+    }
+
+    :Avaliar modelo otimizado
+    no conjunto de validação
+    externo;
+
+    repeat while (Ainda existem folds externos?) is (sim) not (não)
+}
+
+:Registrar métricas da
+validação externa;
+
+stop
+
+@enduml

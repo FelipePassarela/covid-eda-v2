@@ -1,0 +1,33 @@
+@startuml
+title Explain
+
+start
+
+:Carregar modelo
+treinado;
+
+
+partition "Preparação dos Dados" {
+:Carregar e transformar
+features de treino;
+
+:Carregar e transformar
+features de teste;
+}
+
+partition "Explicabilidade (SHAP)" {
+:Criar explicação SHAP
+(treino x teste, classifier);
+
+:Calcular importâncias
+das features;
+
+:Gerar gráfico beeswarm;
+}
+
+:Registrar resultado
+da explicação;
+
+stop
+
+@enduml
