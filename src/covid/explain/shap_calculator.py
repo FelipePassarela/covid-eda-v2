@@ -10,16 +10,20 @@ from sklearn.base import BaseEstimator
 
 
 def create_shap_explanation(
-    X_train_transformed: pd.DataFrame,
-    X_test_transformed: pd.DataFrame,
-    classifier: BaseEstimator,
+    X_background: pd.DataFrame, X_foreground: pd.DataFrame, classifier: BaseEstimator
 ) -> Explanation:
-    masker = shap.maskers.Independent(
-        X_train_transformed, max_samples=len(X_train_transformed)
-    )
+    masker = shap.maskers.Independent(X_background, max_samples=len(X_background))
     explainer = shap.Explainer(classifier, masker=masker)
-    explanation = explainer(X_test_transformed)
+    explanation = explainer(X_foreground)
     return cast(Explanation, explanation)
+
+
+def extract_background_from(
+    X_foreground: pd.DataFrame, n_samples: int | None = None
+) -> pd.DataFrame:
+    if n_samples is None:
+        return X_foreground
+    return shap.sample(X_foreground, nsamples=n_samples)
 
 
 def calculate_shap_importances(explanation: Explanation) -> pd.DataFrame:
@@ -38,4 +42,5 @@ def calculate_shap_importances(explanation: Explanation) -> pd.DataFrame:
 def plot_shap_explanation(explanation: Explanation, max_display: int = 25) -> Figure:
     fig = plt.figure()
     shap.plots.beeswarm(explanation, show=False, max_display=max_display)
+    fig.tight_layout()
     return fig

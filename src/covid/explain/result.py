@@ -9,8 +9,8 @@ from shap import Explanation
 
 @dataclass(frozen=True)
 class ExplainingResult:
-    X_test_transformed: pd.DataFrame
-    X_train_transformed: pd.DataFrame
+    X_foreground: pd.DataFrame
+    X_background: pd.DataFrame
     pipeline: Pipeline
     explanation: Explanation
     importances: pd.DataFrame

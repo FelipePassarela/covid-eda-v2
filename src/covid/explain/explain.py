@@ -1,5 +1,3 @@
-from matplotlib import pyplot as plt
-
 from covid.common.pipeline import (
     load_and_transform_features,
     load_pipeline,
@@ -9,6 +7,7 @@ from covid.explain.result import ExplainingResult
 from covid.explain.shap_calculator import (
     calculate_shap_importances,
     create_shap_explanation,
+    extract_background_from,
     plot_shap_explanation,
 )
 from covid.explain.spec import ExplainingSpec
@@ -26,19 +25,17 @@ def _explain(spec: ExplainingSpec) -> ExplainingResult:
     pipeline = load_pipeline(spec.pipeline_path)
     preprocessor, classifier = split_pipeline(pipeline)
 
-    X_train_transformed = load_and_transform_features(spec.train_path, preprocessor)
-    X_test_transformed = load_and_transform_features(spec.test_path, preprocessor)
+    X_foreground = load_and_transform_features(spec.data_path, preprocessor)
+    X_background = extract_background_from(X_foreground)
 
-    explanation = create_shap_explanation(
-        X_train_transformed, X_test_transformed, classifier
-    )
+    explanation = create_shap_explanation(X_background, X_foreground, classifier)
     importances = calculate_shap_importances(explanation)
 
     beeswarm_plot = plot_shap_explanation(explanation, max_display=spec.max_display)
 
     return ExplainingResult(
-        X_test_transformed=X_test_transformed,
-        X_train_transformed=X_train_transformed,
+        X_foreground=X_foreground,
+        X_background=X_background,
         pipeline=pipeline,
         importances=importances,
         explanation=explanation,

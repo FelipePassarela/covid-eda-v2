@@ -11,16 +11,10 @@ def main() -> None:
     typer.run(explain)
 
 
-def explain(
-    pipeline_path: Path,
-    train_path: Path = paths.INTERIM_TRAIN_DATA_PATH,
-    test_path: Path = paths.INTERIM_TEST_DATA_PATH,
-) -> None:
+def explain(pipeline_path: Path, data_path: Path = paths.RAW_DATA_PATH) -> None:
     tracker = WandbExplainingTracker(run_name=pipeline_path.stem)
     with tracker:
-        spec = ExplainingSpec(
-            pipeline_path=pipeline_path, train_path=train_path, test_path=test_path
-        )
+        spec = ExplainingSpec(pipeline_path=pipeline_path, data_path=data_path)
         run_explain(spec=spec, tracker=tracker)
 
 

@@ -27,8 +27,7 @@ class WandbExplainingTracker:
             {
                 "pipeline/path": str(spec.pipeline_path),
                 "pipeline/name": spec.pipeline_path.stem,
-                "data/train/path": str(spec.train_path),
-                "data/test/path": str(spec.test_path),
+                "data/path": str(spec.data_path),
                 "shap/max_display": spec.max_display,
             }
         )
@@ -37,11 +36,15 @@ class WandbExplainingTracker:
         self._run.config.update({"pipeline/steps": str(result.pipeline.steps)})
         self._run.summary.update(
             {
-                "shap/importances": wandb.Table(data=result.importances),
-                "data/train/n_samples": len(result.X_train_transformed),
-                "data/train/n_features": result.X_train_transformed.shape[1],
-                "data/test/n_samples": len(result.X_test_transformed),
-                "data/test/n_features": result.X_test_transformed.shape[1],
+                "data/background/n_samples": len(result.X_background),
+                "data/background/n_features": result.X_background.shape[1],
+                "data/foreground/n_samples": len(result.X_foreground),
+                "data/foreground/n_features": result.X_foreground.shape[1],
+            }
+        )
+        self._run.log(
+            {
                 "shap/beeswarm": wandb.Image(result.beeswarm_plot),
+                "shap/importances": wandb.Table(data=result.importances),
             }
         )
