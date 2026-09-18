@@ -7,7 +7,7 @@ from sklearn.utils.validation import check_is_fitted
 
 
 class HighMissingRateDropper(BaseEstimator, TransformerMixin):
-    def __init__(self, missing_threshold: float | int) -> None:
+    def __init__(self, missing_threshold: float) -> None:
         if not 0 <= missing_threshold <= 1:
             raise ValueError("missing_threshold must be between 0 and 1")
 

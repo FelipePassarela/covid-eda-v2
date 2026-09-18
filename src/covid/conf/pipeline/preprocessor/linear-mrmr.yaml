@@ -1,0 +1,32 @@
+- - column_dropper
+  - _target_: covid.feature.ColumnDropper
+    columns_to_drop:
+      - id
+
+- - missing_rate_dropper
+  - _target_: covid.feature.HighMissingRateDropper
+    missing_threshold: 0.05
+
+- - imputer
+  - _target_: sklearn.impute.SimpleImputer
+    strategy: most_frequent
+
+- - scaler
+  - _target_: sklearn.preprocessing.StandardScaler
+
+- - filter
+  - _target_: covid.feature.MRMRSelector
+    k: 50
+
+- - selector
+  - _target_: sklearn.feature_selection.SelectFromModel
+    estimator:
+      _target_: sklearn.linear_model.LogisticRegression
+      solver: saga
+      l1_ratio: 0.5
+      max_iter: 5000
+    max_features: 20
+
+- - sampler
+  - _target_: imblearn.over_sampling.RandomOverSampler
+    random_state: 42
