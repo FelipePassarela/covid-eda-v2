@@ -7,3 +7,4 @@ classifier:
   max_depth: 4
   eval_metric: logloss
   random_state: 42
+  enable_categorical: false
