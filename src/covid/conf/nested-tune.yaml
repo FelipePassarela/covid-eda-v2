@@ -2,7 +2,7 @@ defaults:
   - search@inner_search: dummy
   - _self_
 
-name: nested-tune-${hydra:runtime.choices.search@inner_search}
+name: ${hydra:runtime.choices.search@inner_search}
 inner_search:
   data_path: data/raw/longa_nao_vacinados.csv
 n_outer_splits: 5

@@ -2,6 +2,6 @@ defaults:
   - search@_global_: dummy
   - _self_
 
-name: tune-${hydra:runtime.choices.pipeline}
+name: ${hydra:runtime.choices.pipeline}
 search:
   data_path: data/raw/longa_nao_vacinados.csv
