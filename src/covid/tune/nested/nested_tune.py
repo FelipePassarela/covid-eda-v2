@@ -72,5 +72,5 @@ def _run_nested_cv(
         scoring=inner_search.scoring,
         return_estimator=True,
         n_jobs=-1,
-        verbose=1,
+        verbose=3,
     )
