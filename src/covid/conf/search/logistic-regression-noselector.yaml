@@ -1,0 +1,25 @@
+defaults:
+  - /pipeline: logistic-regression
+  - override /pipeline/preprocessor: linear-noselector
+  - _self_
+
+name: tune-${hydra:runtime.choices.pipeline}
+data_path: data/interim/train.csv
+
+n_splits: 5
+n_fold_repeats: 1
+n_searches: 30
+
+scoring:
+  - balanced_accuracy
+  - f1
+  - precision
+  - recall
+
+param_distributions:
+  classifier__solver:
+    - lbfgs
+  classifier__C:
+    - 0.001
+    - 0.01
+    - 0.1

@@ -18,6 +18,9 @@
       _partial_: true
     k: 50
 
+- - scaler
+  - _target_: sklearn.preprocessing.StandardScaler
+
 - - selector
   - _target_: sklearn.feature_selection.SelectFromModel
     estimator:

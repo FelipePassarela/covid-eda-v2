@@ -1,0 +1,34 @@
+- - column_dropper
+  - _target_: covid.feature.ColumnDropper
+    columns_to_drop:
+      - id
+
+- - missing_rate_dropper
+  - _target_: covid.feature.HighMissingRateDropper
+    missing_threshold: 0.05
+
+- - imputer
+  - _target_: sklearn.impute.SimpleImputer
+    strategy: most_frequent
+
+- - filter
+  - _target_: sklearn.feature_selection.SelectKBest
+    score_func:
+      _target_: sklearn.feature_selection.chi2
+      _partial_: true
+    k: 50
+
+- - selector
+  - _target_: sklearn.feature_selection.SelectFromModel
+    estimator:
+      _target_: sklearn.ensemble.ExtraTreesClassifier
+      n_estimators: 500
+      max_depth: null
+      min_samples_leaf: 5
+      random_state: 42
+      class_weight: balanced
+    max_features: 25
+
+- - sampler
+  - _target_: imblearn.over_sampling.RandomOverSampler
+    random_state: 42
