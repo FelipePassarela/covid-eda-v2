@@ -3,4 +3,4 @@ defaults:
   - _self_
 
 data_path: data/raw/longa_nao_vacinados.csv
-name: ${hydra:runtime.choices.pipeline}
+name: ${hydra:runtime.choices.search@_global_}

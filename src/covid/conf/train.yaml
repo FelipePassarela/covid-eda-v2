@@ -2,10 +2,10 @@ defaults:
   - pipeline: dummy
   - _self_
 
-name: ${hydra:runtime.choices.pipeline}
+name: ${hydra:runtime.choices.pipeline}-${hydra:runtime.choices.pipeline/preprocessor}
 
 train_data_path: data/raw/longa_nao_vacinados.csv
-output_path: models/${hydra:runtime.choices.pipeline}.joblib
+output_path: models/${name}.joblib
 
 tune_threshold: false
 tuning_scoring: balanced_accuracy
