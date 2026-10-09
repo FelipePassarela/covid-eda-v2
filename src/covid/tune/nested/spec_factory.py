@@ -8,4 +8,5 @@ def nested_tuning_spec_from_config(config: DictConfig) -> NestedTuningSpec:
     return NestedTuningSpec(
         inner=tuning_spec_from_config(config.inner_search),
         n_outer_splits=config.n_outer_splits,
+        n_outer_repeats=config.n_outer_repeats,
     )

@@ -2,7 +2,12 @@ from typing import Any
 
 import pandas as pd
 from loguru import logger
-from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, cross_validate
+from sklearn.model_selection import (
+    RandomizedSearchCV,
+    RepeatedStratifiedKFold,
+    StratifiedKFold,
+    cross_validate,
+)
 
 from covid.common import constants
 from covid.common.data import load_and_split_data
@@ -25,7 +30,7 @@ def _nested_tune(spec: NestedTuningSpec) -> NestedTuningResult:
     X, y = load_and_split_data(spec.inner.data_path)
 
     inner_search = _create_inner_search(spec.inner)
-    outer_cv = _create_outer_cv(spec.n_outer_splits)
+    outer_cv = _create_outer_cv(spec.n_outer_splits, spec.n_outer_repeats)
     nested_scores = _run_nested_cv(X, y, inner_search, outer_cv)
 
     return NestedTuningResult.from_nested_scores(nested_scores)
@@ -47,9 +52,9 @@ def _create_inner_search(spec: TuningSpec) -> RandomizedSearchCV:
     )
 
 
-def _create_outer_cv(outer_n_splits: int) -> StratifiedKFold:
-    return StratifiedKFold(
-        n_splits=outer_n_splits, shuffle=True, random_state=constants.RANDOM_STATE
+def _create_outer_cv(n_splits: int, n_repeats: int = 1) -> RepeatedStratifiedKFold:
+    return RepeatedStratifiedKFold(
+        n_splits=n_splits, n_repeats=n_repeats, random_state=constants.RANDOM_STATE
     )
 
 
@@ -57,7 +62,7 @@ def _run_nested_cv(
     X: pd.DataFrame,
     y: pd.Series,
     inner_search: RandomizedSearchCV,
-    outer_cv: StratifiedKFold,
+    outer_cv: RepeatedStratifiedKFold,
 ) -> dict[str, Any]:
     logger.info(
         "Running nested cross-validation with {} outer splits and {} inner splits",

@@ -6,7 +6,6 @@ defaults:
 data_path: data/interim/train.csv
 
 n_splits: 5
-n_fold_repeats: 1
 n_searches: 100
 
 scoring:

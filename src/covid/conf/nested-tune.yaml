@@ -3,6 +3,11 @@ defaults:
   - _self_
 
 name: ${hydra:runtime.choices.search@inner_search}
+
 inner_search:
   data_path: data/raw/longa_nao_vacinados.csv
+  n_fold_repeats: 1  # TODO: This is necessary to prevent it from breaking. Fix later
+
 n_outer_splits: 5
+n_outer_repeats: 6
+

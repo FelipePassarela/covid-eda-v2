@@ -4,3 +4,4 @@ defaults:
 
 data_path: data/raw/longa_nao_vacinados.csv
 name: ${hydra:runtime.choices.search@_global_}
+n_fold_repeats: 1

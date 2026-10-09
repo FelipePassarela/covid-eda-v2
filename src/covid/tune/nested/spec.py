@@ -7,3 +7,4 @@ from covid.tune import TuningSpec
 class NestedTuningSpec:
     inner: TuningSpec
     n_outer_splits: int
+    n_outer_repeats: int

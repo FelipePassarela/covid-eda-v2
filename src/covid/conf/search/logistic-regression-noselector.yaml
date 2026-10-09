@@ -7,7 +7,6 @@ name: tune-${hydra:runtime.choices.pipeline}
 data_path: data/interim/train.csv
 
 n_splits: 5
-n_fold_repeats: 1
 n_searches: 30
 
 scoring:
