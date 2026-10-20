@@ -1,10 +1,11 @@
 defaults:
+  - dataset: interim
   - pipeline: dummy
   - _self_
 
+seed: 42
 name: ${hydra:runtime.choices.pipeline}-${hydra:runtime.choices.pipeline/preprocessor}
-
-train_data_path: data/raw/longa_nao_vacinados.csv
+train_data_path: ${dataset.path}
 output_path: models/${name}.joblib
 
 tune_threshold: false

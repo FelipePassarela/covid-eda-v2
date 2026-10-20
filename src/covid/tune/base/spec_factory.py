@@ -20,5 +20,5 @@ def tuning_spec_from_config(config: DictConfig) -> TuningSpec:
         n_splits=config.n_splits,
         n_fold_repeats=config.n_fold_repeats,
         scoring=config.scoring,
-        data_path=config.data_path,
+        data_path=config.dataset.path,
     )

@@ -1,0 +1,13 @@
+classifier__C:
+  - 0.01
+  - 0.1
+  - 1.0
+  - 10.0
+classifier__gamma:
+  - scale
+  - auto
+  - 0.001
+  - 0.01
+classifier__kernel:
+  - linear
+  - rbf

@@ -1,0 +1,7 @@
+_target_: sklearn.feature_selection.SelectFromModel
+estimator:
+  _target_: sklearn.linear_model.LogisticRegression
+  solver: saga
+  l1_ratio: 0.5
+  max_iter: 5000
+max_features: 15

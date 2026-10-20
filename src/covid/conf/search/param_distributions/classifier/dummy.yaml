@@ -1,0 +1,4 @@
+classifier__strategy:
+  - most_frequent
+  - stratified
+  - uniform

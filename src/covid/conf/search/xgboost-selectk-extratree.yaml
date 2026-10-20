@@ -1,65 +1,9 @@
 defaults:
+  - /search/common@_here_: default
   - /pipeline: xgboost
+  - param_distributions/classifier@param_distributions: xgboost
+  - param_distributions/selector@param_distributions: forest
   - override /pipeline/preprocessor: tree-selectk-extratree
   - _self_
 
-data_path: data/interim/train.csv
-
-n_splits: 5
 n_searches: 100
-
-scoring:
-  - balanced_accuracy
-  - f1
-  - precision
-  - recall
-
-param_distributions:
-  selector__max_features:
-    - 10
-    - 15
-    - 20
-    - 25
-  selector__estimator__n_estimators:
-    - 100
-    - 300
-    - 500
-  selector__estimator__max_depth:
-    - 4
-    - 6
-    - 8
-    - 16
-  selector__estimator__min_samples_leaf:
-    - 1
-    - 5
-    - 10
-  classifier__n_estimators:
-    - 30
-    - 50
-    - 100
-    - 300
-  classifier__learning_rate:
-    - 0.01
-    - 0.03
-    - 0.1
-  classifier__max_depth:
-    - 2
-    - 3
-    - 4
-    - 6
-  classifier__subsample:
-    - 0.6
-    - 0.8
-    - 1.0
-  classifier__colsample_bytree:
-    - 0.6
-    - 0.8
-    - 1.0
-  classifier__reg_alpha:
-    - 0
-    - 0.1
-    - 1.0
-  classifier__reg_lambda:
-    - 0.1
-    - 1.0
-    - 5.0

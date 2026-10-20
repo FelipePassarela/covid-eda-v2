@@ -1,0 +1,3 @@
+_target_: covid.feature.ColumnDropper
+columns_to_drop:
+  - id

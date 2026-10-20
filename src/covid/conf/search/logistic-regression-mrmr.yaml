@@ -1,29 +1,9 @@
 defaults:
+  - /search/common@_here_: default
   - /pipeline: logistic-regression
+  - param_distributions/classifier@param_distributions: logistic-regression-lbfgs
+  - param_distributions/selector@param_distributions: selectk
   - override /pipeline/preprocessor: linear-mrmr
   - _self_
 
-name: tune-${hydra:runtime.choices.pipeline}
-data_path: data/interim/train.csv
-
-n_splits: 5
 n_searches: 30
-
-scoring:
-  - balanced_accuracy
-  - f1
-  - precision
-  - recall
-
-param_distributions:
-  selector__k:
-    - 10
-    - 15
-    - 25
-    - 35
-  classifier__solver:
-    - lbfgs
-  classifier__C:
-    - 0.001
-    - 0.01
-    - 0.1

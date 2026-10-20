@@ -1,26 +1,16 @@
-- - column_dropper
-  - _target_: covid.feature.ColumnDropper
-    columns_to_drop:
-      - id
+defaults:
+  - steps@steps.column_dropper: column_dropper
+  - steps@steps.missing_rate_dropper: missing_rate_dropper
+  - steps@steps.imputer: imputer
+  - steps@steps.selector: selectk_50
+  - steps@steps.scaler: scaler
+  - steps@steps.sampler: sampler
+  - _self_
 
-- - missing_rate_dropper
-  - _target_: covid.feature.HighMissingRateDropper
-    missing_threshold: 0.05
-
-- - imputer
-  - _target_: sklearn.impute.SimpleImputer
-    strategy: most_frequent
-
-- - selector
-  - _target_: sklearn.feature_selection.SelectKBest
-    score_func:
-      _target_: sklearn.feature_selection.chi2
-      _partial_: true
-    k: 50
-
-- - scaler
-  - _target_: sklearn.preprocessing.StandardScaler
-
-- - sampler
-  - _target_: imblearn.over_sampling.RandomOverSampler
-    random_state: 42
+order:
+  - column_dropper
+  - missing_rate_dropper
+  - imputer
+  - selector
+  - scaler
+  - sampler

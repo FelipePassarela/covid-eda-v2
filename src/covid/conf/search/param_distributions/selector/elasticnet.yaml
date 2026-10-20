@@ -1,0 +1,5 @@
+selector__max_features:
+  - 10
+  - 15
+  - 25
+  - 35

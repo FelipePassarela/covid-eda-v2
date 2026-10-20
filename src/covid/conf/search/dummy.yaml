@@ -1,21 +1,7 @@
 defaults:
+  - /search/common@_here_: default
   - /pipeline: dummy
+  - param_distributions/classifier@param_distributions: dummy
   - _self_
 
-data_path: data/interim/train.csv
-
-n_splits: 5
-n_searches: 4
-
-scoring:
-  - balanced_accuracy
-  - f1
-  - precision
-  - recall
-
-param_distributions:
-  classifier__strategy:
-    - most_frequent
-    - stratified
-    - uniform
-    - constant
+n_searches: 3

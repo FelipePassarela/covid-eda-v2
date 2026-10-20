@@ -1,44 +1,9 @@
 defaults:
+  - /search/common@_here_: default
   - /pipeline: catboost
+  - param_distributions/classifier@param_distributions: catboost
+  - param_distributions/selector@param_distributions: elasticnet
   - override /pipeline/preprocessor: tree-selectk-elasticnet
   - _self_
 
-data_path: data/interim/train.csv
-
-n_splits: 5
 n_searches: 100
-
-scoring:
-  - balanced_accuracy
-  - f1
-  - precision
-  - recall
-
-param_distributions:
-  selector__max_features:
-    - 10
-    - 15
-    - 20
-    - 25
-  classifier__n_estimators:
-    - 30
-    - 50
-    - 100
-    - 300
-  classifier__learning_rate:
-    - 0.01
-    - 0.03
-    - 0.1
-  classifier__depth:
-    - 2
-    - 3
-    - 4
-    - 6
-  classifier__l2_leaf_reg:
-    - 0
-    - 1
-    - 5
-  classifier__rsm:
-    - 0.6
-    - 0.8
-    - 1.0

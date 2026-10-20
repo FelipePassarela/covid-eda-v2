@@ -1,0 +1,9 @@
+_target_: sklearn.feature_selection.SelectFromModel
+estimator:
+  _target_: sklearn.ensemble.ExtraTreesClassifier
+  n_estimators: 500
+  max_depth: null
+  min_samples_leaf: 5
+  random_state: ${seed}
+  class_weight: balanced
+max_features: 25

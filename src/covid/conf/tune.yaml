@@ -1,7 +1,8 @@
 defaults:
+  - dataset: raw
   - search@_global_: dummy
   - _self_
 
-data_path: data/raw/longa_nao_vacinados.csv
+seed: 42
 name: ${hydra:runtime.choices.search@_global_}
-n_fold_repeats: 1
+n_fold_repeats: 5

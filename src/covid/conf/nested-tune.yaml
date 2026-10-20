@@ -1,13 +1,15 @@
 defaults:
+  - dataset: raw
   - search@inner_search: dummy
   - _self_
 
+seed: 42
 name: ${hydra:runtime.choices.search@inner_search}
 
 inner_search:
-  data_path: data/raw/longa_nao_vacinados.csv
+  dataset: ${dataset}
   n_fold_repeats: 1  # TODO: This is necessary to prevent it from breaking. Fix later
 
-n_outer_splits: 5
-n_outer_repeats: 6
-
+outer_cv:
+  n_splits: 5
+  n_repeats: 6

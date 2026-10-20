@@ -1,0 +1,2 @@
+_target_: imblearn.over_sampling.RandomOverSampler
+random_state: ${seed}

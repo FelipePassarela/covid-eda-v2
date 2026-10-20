@@ -1,0 +1,6 @@
+n_splits: 5
+scoring:
+  - balanced_accuracy
+  - f1
+  - precision
+  - recall

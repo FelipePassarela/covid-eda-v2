@@ -1,0 +1,2 @@
+_target_: sklearn.impute.SimpleImputer
+strategy: most_frequent

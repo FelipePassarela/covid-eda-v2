@@ -5,4 +5,4 @@ defaults:
 classifier:
   _target_: lightgbm.LGBMClassifier
   max_depth: 4
-  random_state: 42
+  random_state: ${seed}

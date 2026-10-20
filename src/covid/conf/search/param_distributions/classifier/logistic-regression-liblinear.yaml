@@ -1,0 +1,9 @@
+classifier__C:
+  - 0.001
+  - 0.01
+  - 0.1
+classifier__l1_ratio:
+  - 0.0
+  - 1.0
+classifier__solver:
+  - liblinear

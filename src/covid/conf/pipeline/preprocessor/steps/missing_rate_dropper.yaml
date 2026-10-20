@@ -1,0 +1,2 @@
+_target_: covid.feature.HighMissingRateDropper
+missing_threshold: 0.05

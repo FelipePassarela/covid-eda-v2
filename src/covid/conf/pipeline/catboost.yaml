@@ -9,5 +9,5 @@ classifier:
   depth: 4
   l2_leaf_reg: 3
   rsm: 0.8
-  random_state: 42
-  verbose: False
+  random_state: ${seed}
+  verbose: false

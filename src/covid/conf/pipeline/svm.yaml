@@ -4,4 +4,4 @@ defaults:
 
 classifier:
   _target_: sklearn.svm.SVC
-  random_state: 42
+  random_state: ${seed}

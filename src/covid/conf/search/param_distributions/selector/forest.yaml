@@ -1,0 +1,18 @@
+selector__estimator__max_depth:
+  - 4
+  - 6
+  - 8
+  - 16
+selector__estimator__min_samples_leaf:
+  - 1
+  - 5
+  - 10
+selector__estimator__n_estimators:
+  - 100
+  - 300
+  - 500
+selector__max_features:
+  - 10
+  - 15
+  - 20
+  - 25

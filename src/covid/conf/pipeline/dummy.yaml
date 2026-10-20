@@ -5,4 +5,4 @@ defaults:
 classifier:
   _target_: sklearn.dummy.DummyClassifier
   strategy: most_frequent
-  random_state: 42
+  random_state: ${seed}

@@ -6,5 +6,5 @@ classifier:
   _target_: xgboost.XGBClassifier
   max_depth: 4
   eval_metric: logloss
-  random_state: 42
+  random_state: ${seed}
   enable_categorical: false
