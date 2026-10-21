@@ -1,6 +1,10 @@
 n_splits: 5
 scoring:
+  - roc_auc
   - balanced_accuracy
+  - matthews_corrcoef
+  - average_precision
   - f1
+  - neg_log_loss
   - precision
   - recall
