@@ -1,13 +1,12 @@
 defaults:
   - dataset: raw
-  - search@inner_search: dummy
+  - search: dummy
   - _self_
 
 seed: 42
-name: ${hydra:runtime.choices.search@inner_search}
+name: ${hydra:runtime.choices.search}
 
-inner_search:
-  dataset: ${dataset}
+search:
   n_fold_repeats: 1  # TODO: This is necessary to prevent it from breaking. Fix later
 
 outer_cv:

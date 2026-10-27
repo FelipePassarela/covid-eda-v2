@@ -7,8 +7,9 @@ from covid.tune import TuningSpec
 
 
 def tuning_spec_from_config(config: DictConfig) -> TuningSpec:
-    pipeline = build_pipeline_from_config(config)
-    param_distributions = instantiate(config.param_distributions, _convert_="all")
+    search = config.search
+    pipeline = build_pipeline_from_config(search)
+    param_distributions = instantiate(search.param_distributions, _convert_="all")
 
     logger.debug("Pipeline to tune: {}", pipeline)
     logger.debug("Parameter distributions to tune: {}", param_distributions)
@@ -16,9 +17,9 @@ def tuning_spec_from_config(config: DictConfig) -> TuningSpec:
     return TuningSpec(
         pipeline=pipeline,
         param_distributions=param_distributions,
-        n_searches=config.n_searches,
-        n_splits=config.n_splits,
-        n_fold_repeats=config.n_fold_repeats,
-        scoring=config.scoring,
+        n_searches=search.n_searches,
+        n_splits=search.n_splits,
+        n_fold_repeats=search.n_fold_repeats,
+        scoring=search.scoring,
         data_path=config.dataset.path,
     )

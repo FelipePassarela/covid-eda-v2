@@ -6,7 +6,7 @@ from covid.tune.nested import NestedTuningSpec
 
 def nested_tuning_spec_from_config(config: DictConfig) -> NestedTuningSpec:
     return NestedTuningSpec(
-        inner=tuning_spec_from_config(config.inner_search),
+        inner=tuning_spec_from_config(config),
         n_outer_splits=config.outer_cv.n_splits,
         n_outer_repeats=config.outer_cv.n_repeats,
     )

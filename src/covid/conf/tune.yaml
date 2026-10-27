@@ -1,8 +1,10 @@
 defaults:
   - dataset: raw
-  - search@_global_: dummy
+  - search: dummy
   - _self_
 
 seed: 42
-name: ${hydra:runtime.choices.search@_global_}
-n_fold_repeats: 5
+name: ${hydra:runtime.choices.search}
+
+search:
+  n_fold_repeats: 5
