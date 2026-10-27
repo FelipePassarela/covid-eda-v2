@@ -1,18 +1,17 @@
 selector__estimator__max_depth:
-  - 4
-  - 6
-  - 8
-  - 16
+  _target_: optuna.distributions.IntDistribution
+  low: 4
+  high: 16
 selector__estimator__min_samples_leaf:
-  - 1
-  - 5
-  - 10
+  _target_: optuna.distributions.IntDistribution
+  low: 1
+  high: 10
 selector__estimator__n_estimators:
-  - 100
-  - 300
-  - 500
+  _target_: optuna.distributions.IntDistribution
+  low: 100
+  high: 500
+  step: 50
 selector__max_features:
-  - 10
-  - 15
-  - 20
-  - 25
+  _target_: optuna.distributions.IntDistribution
+  low: 10
+  high: 25

@@ -1,13 +1,18 @@
+# gamma stays categorical to retain both automatic modes and numeric values.
 classifier__C:
-  - 0.01
-  - 0.1
-  - 1.0
-  - 10.0
+  _target_: optuna.distributions.FloatDistribution
+  low: 0.001
+  high: 100.0
+  log: true
 classifier__gamma:
+  _target_: optuna.distributions.CategoricalDistribution
+  choices:
   - scale
   - auto
   - 0.001
   - 0.01
 classifier__kernel:
+  _target_: optuna.distributions.CategoricalDistribution
+  choices:
   - linear
   - rbf

@@ -3,6 +3,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 from imblearn.pipeline import Pipeline
+from optuna.distributions import CategoricalDistribution
 from sklearn.dummy import DummyClassifier
 
 from covid.tune import TuningSpec
@@ -18,8 +19,10 @@ def spec(tmp_path: Path, classification_df: pd.DataFrame) -> TuningSpec:
     return TuningSpec(
         data_path=data_path,
         pipeline=Pipeline(steps=[("clf", classifier)]),
-        param_distributions={"clf__strategy": ["most_frequent", "stratified"]},
+        param_distributions={
+            "clf__strategy": CategoricalDistribution(["most_frequent", "stratified"])
+        },
         n_searches=2,
         n_fold_repeats=1,
-        scoring=["accuracy"],
+        scoring=["accuracy", "balanced_accuracy"],
     )

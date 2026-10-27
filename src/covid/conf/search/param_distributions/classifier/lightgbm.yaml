@@ -1,40 +1,44 @@
+# subsample_freq=1 enables row sampling; max_depth also caps num_leaves.
 classifier__colsample_bytree:
-  - 0.6
-  - 0.8
-  - 1.0
+  _target_: optuna.distributions.FloatDistribution
+  low: 0.6
+  high: 1.0
 classifier__learning_rate:
-  - 0.01
-  - 0.03
-  - 0.1
+  _target_: optuna.distributions.FloatDistribution
+  low: 0.01
+  high: 0.1
+  log: true
 classifier__max_depth:
-  - 2
-  - 3
-  - 4
-  - 6
+  _target_: optuna.distributions.IntDistribution
+  low: 2
+  high: 6
 classifier__min_child_samples:
-  - 5
-  - 10
-  - 20
-  - 30
+  _target_: optuna.distributions.IntDistribution
+  low: 5
+  high: 30
 classifier__n_estimators:
-  - 30
-  - 50
-  - 100
-  - 300
+  _target_: optuna.distributions.IntDistribution
+  low: 30
+  high: 300
+  step: 10
 classifier__num_leaves:
-  - 15
-  - 31
-  - 63
-  - 127
+  _target_: optuna.distributions.IntDistribution
+  low: 4
+  high: 64
 classifier__reg_alpha:
-  - 0
-  - 0.1
-  - 1.0
+  _target_: optuna.distributions.FloatDistribution
+  low: 0.0
+  high: 1.0
 classifier__reg_lambda:
-  - 0.1
-  - 1.0
-  - 5.0
+  _target_: optuna.distributions.FloatDistribution
+  low: 0.1
+  high: 5.0
+  log: true
 classifier__subsample:
-  - 0.6
-  - 0.8
-  - 1.0
+  _target_: optuna.distributions.FloatDistribution
+  low: 0.6
+  high: 1.0
+classifier__subsample_freq:
+  _target_: optuna.distributions.CategoricalDistribution
+  choices:
+    - 1

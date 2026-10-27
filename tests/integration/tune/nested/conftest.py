@@ -6,7 +6,7 @@ from covid.tune.nested import NestedTuningResult, NestedTuningSpec
 
 @pytest.fixture()
 def nested_spec(spec: TuningSpec) -> NestedTuningSpec:
-    return NestedTuningSpec(inner=spec, n_outer_splits=3)
+    return NestedTuningSpec(inner=spec, n_outer_splits=3, n_outer_repeats=2)
 
 
 def assert_nested_result(result: NestedTuningResult, spec: NestedTuningSpec) -> None:
@@ -15,5 +15,6 @@ def assert_nested_result(result: NestedTuningResult, spec: NestedTuningSpec) -> 
     assert set(result.mean_test_scores) == {f"test_{s}" for s in spec.inner.scoring}
     assert set(result.std_test_scores) == {f"test_{s}" for s in spec.inner.scoring}
 
-    assert len(result.params_per_fold) == spec.n_outer_splits
+    assert len(result.params_per_fold) == spec.n_outer_splits * spec.n_outer_repeats
     assert not result.cv_report.empty
+    assert len(result.cv_report) == len(result.params_per_fold)

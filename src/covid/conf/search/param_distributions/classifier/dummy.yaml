@@ -1,4 +1,6 @@
 classifier__strategy:
+  _target_: optuna.distributions.CategoricalDistribution
+  choices:
   - most_frequent
   - stratified
   - uniform

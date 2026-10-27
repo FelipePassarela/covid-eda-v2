@@ -1,9 +1,11 @@
+from functools import partial
 from typing import Any
 
 import pandas as pd
 from loguru import logger
+from optuna_integration import OptunaSearchCV
+from sklearn.metrics import get_scorer
 from sklearn.model_selection import (
-    RandomizedSearchCV,
     RepeatedStratifiedKFold,
     StratifiedKFold,
     cross_validate,
@@ -31,24 +33,26 @@ def _nested_tune(spec: NestedTuningSpec) -> NestedTuningResult:
 
     inner_search = _create_inner_search(spec.inner)
     outer_cv = _create_outer_cv(spec.n_outer_splits, spec.n_outer_repeats)
-    nested_scores = _run_nested_cv(X, y, inner_search, outer_cv)
+    nested_scores = _run_nested_cv(X, y, inner_search, outer_cv, spec.inner.scoring)
 
     return NestedTuningResult.from_nested_scores(nested_scores)
 
 
-def _create_inner_search(spec: TuningSpec) -> RandomizedSearchCV:
+def _create_inner_search(spec: TuningSpec) -> OptunaSearchCV:
     cv = StratifiedKFold(
         n_splits=spec.n_splits, shuffle=True, random_state=constants.RANDOM_STATE
     )
-    return RandomizedSearchCV(
+    return OptunaSearchCV(
         estimator=spec.pipeline,
         param_distributions=spec.param_distributions,
-        n_iter=spec.n_searches,
-        scoring=spec.scoring,
-        refit=spec.scoring[0],
+        n_trials=spec.n_searches,
+        scoring=spec.scoring[0],
+        refit=True,
         cv=cv,
         return_train_score=True,
         random_state=constants.RANDOM_STATE,
+        n_jobs=1,
+        enable_pruning=False,
     )
 
 
@@ -61,8 +65,9 @@ def _create_outer_cv(n_splits: int, n_repeats: int = 1) -> RepeatedStratifiedKFo
 def _run_nested_cv(
     X: pd.DataFrame,
     y: pd.Series,
-    inner_search: RandomizedSearchCV,
+    inner_search: OptunaSearchCV,
     outer_cv: RepeatedStratifiedKFold,
+    scoring: list[str],
 ) -> dict[str, Any]:
     logger.info(
         "Running nested cross-validation with {} outer splits and {} inner splits",
@@ -74,8 +79,21 @@ def _run_nested_cv(
         X,
         y,
         cv=outer_cv,
-        scoring=inner_search.scoring,
+        scoring=partial(_score_best_estimator, scoring=scoring),
         return_estimator=True,
         n_jobs=-1,
         verbose=3,
+        error_score="raise",
     )
+
+
+def _score_best_estimator(
+    search: OptunaSearchCV, X_test: pd.DataFrame, y_test: pd.Series, scoring: list[str]
+) -> dict[str, float]:
+    # OptunaSearchCV exposes decision_function even when its pipeline does
+    # not. Score the fitted pipeline so sklearn selects a supported method.
+    scorers = {metric: get_scorer(metric) for metric in scoring}
+    return {
+        metric: scorer(search.best_estimator_, X_test, y_test)
+        for metric, scorer in scorers.items()
+    }
