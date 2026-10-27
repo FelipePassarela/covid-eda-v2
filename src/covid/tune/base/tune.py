@@ -1,6 +1,5 @@
-from sklearn.callback import ProgressBar
+from optuna_integration import OptunaSearchCV
 from sklearn.model_selection import (
-    RandomizedSearchCV,
     RepeatedStratifiedKFold,
 )
 
@@ -9,6 +8,7 @@ from covid.common.data import load_and_split_data
 from covid.tune.base.result import TuningResult
 from covid.tune.base.spec import TuningSpec
 from covid.tune.base.tracking import TuningTracker
+from covid.tune.common.cv_report import OptunaSearchCVAdapter
 
 
 def tune(spec: TuningSpec, tracker: TuningTracker) -> TuningResult:
@@ -22,26 +22,26 @@ def _tune(spec: TuningSpec) -> TuningResult:
     X, y = load_and_split_data(spec.data_path)
     search = _create_search(spec)
     search.fit(X, y)
-    return TuningResult.from_fitted_search(search)
+    fitted_search = OptunaSearchCVAdapter(search, spec.scoring[0])
+    return TuningResult.from_fitted_search(fitted_search)
 
 
-def _create_search(spec: TuningSpec) -> RandomizedSearchCV:
+def _create_search(spec: TuningSpec) -> OptunaSearchCV:
     cv = RepeatedStratifiedKFold(
         n_splits=spec.n_splits,
         n_repeats=spec.n_fold_repeats,
         random_state=constants.RANDOM_STATE,
     )
-    search = RandomizedSearchCV(
+    # noinspection bad-argument-type
+    return OptunaSearchCV(
         estimator=spec.pipeline,
         param_distributions=spec.param_distributions,
-        n_iter=spec.n_searches,
-        scoring=spec.scoring,
-        refit=spec.scoring[0],
+        n_trials=spec.n_searches,
+        scoring=spec.scoring[0],
         cv=cv,
+        refit=True,
         return_train_score=True,
-        verbose=1,
-        n_jobs=-1,
+        enable_pruning=False,
         random_state=constants.RANDOM_STATE,
+        n_jobs=-1,
     )
-    search.set_callbacks(ProgressBar())
-    return search

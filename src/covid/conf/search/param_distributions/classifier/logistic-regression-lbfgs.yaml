@@ -1,6 +1,9 @@
 classifier__C:
-  - 0.001
-  - 0.01
-  - 0.1
+  _target_: optuna.distributions.FloatDistribution
+  low: 0.0001
+  high: 10.0
+  log: true
 classifier__solver:
+  _target_: optuna.distributions.CategoricalDistribution
+  choices:
   - lbfgs

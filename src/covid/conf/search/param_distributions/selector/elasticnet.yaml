@@ -1,5 +1,4 @@
 selector__max_features:
-  - 10
-  - 15
-  - 25
-  - 35
+  _target_: optuna.distributions.IntDistribution
+  low: 10
+  high: 35

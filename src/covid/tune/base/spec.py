@@ -1,6 +1,7 @@
 from typing import Any, Self
 
 from imblearn.pipeline import Pipeline
+from optuna.distributions import BaseDistribution
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -18,7 +19,7 @@ class TuningSpec(BaseModel):
     )
 
     pipeline: Pipeline
-    param_distributions: dict[str, Any] | list[dict[str, Any]]
+    param_distributions: dict[str, BaseDistribution]
     n_searches: PositiveInt
     n_splits: PositiveInt = 5
     n_fold_repeats: PositiveInt = 5
@@ -31,19 +32,9 @@ class TuningSpec(BaseModel):
     def validate_param_distributions(self) -> Self:
         distributions = self.param_distributions
 
-        if isinstance(distributions, dict):
-            if not distributions:
-                raise ValueError("param_distributions must not be empty")
-            self._validate_parameter_names(distributions)
-            return self
-
         if not distributions:
             raise ValueError("param_distributions must not be empty")
-
-        for distribution in distributions:
-            if not distribution:
-                raise ValueError("param_distributions entries must not be empty")
-            self._validate_parameter_names(distribution)
+        self._validate_parameter_names(distributions)
 
         return self
 
@@ -61,15 +52,9 @@ class TuningSpec(BaseModel):
 
     @field_serializer("param_distributions")
     def serialize_param_distributions(
-        self, distributions: dict[str, Any] | list[dict[str, Any]]
-    ) -> dict[str, str] | list[dict[str, str]]:
-        if isinstance(distributions, dict):
-            return self._serialize_dict(distributions)
-
-        return [
-            self._serialize_dict(distribution_group)
-            for distribution_group in distributions
-        ]
+        self, distributions: dict[str, BaseDistribution]
+    ) -> dict[str, str]:
+        return self._serialize_dict(distributions)
 
     @staticmethod
     def _serialize_dict(distributions: dict[str, Any]) -> dict[str, str]:

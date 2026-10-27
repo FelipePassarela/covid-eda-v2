@@ -1,5 +1,4 @@
 selector__k:
-  - 10
-  - 15
-  - 30
-  - 50
+  _target_: optuna.distributions.IntDistribution
+  low: 10
+  high: 50

@@ -9,6 +9,7 @@ models/
 outputs/
 multirun/
 report/
+catboost_info/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
