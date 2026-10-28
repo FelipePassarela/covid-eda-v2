@@ -2,7 +2,7 @@ defaults:
   - /search/common@_here_: default
   - /pipeline: xgboost
   - param_distributions/classifier@param_distributions: xgboost
-  - param_distributions/selector@param_distributions: selectk
+  - override /pipeline/preprocessor: tree-noselector
   - _self_
 
-n_searches: 10
+n_searches: 100

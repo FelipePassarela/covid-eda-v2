@@ -1,0 +1,12 @@
+defaults:
+  - steps@steps.column_dropper: column_dropper
+  - steps@steps.missing_rate_dropper: missing_rate_dropper
+  - steps@steps.imputer: imputer
+  - steps@steps.sampler: sampler
+  - _self_
+
+order:
+  - column_dropper
+  - missing_rate_dropper
+  - imputer
+  - sampler
