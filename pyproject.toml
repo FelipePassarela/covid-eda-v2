@@ -52,9 +52,9 @@ dev = [
 
 [project.scripts]
 split = "covid.ingest.split_data:main"
-tune = "covid.tune.base.cli:main"
-ntune = "covid.tune.nested.cli:main"
-boxplot = "covid.tune.nested.result.visualization.cli:main"
+tune = "covid.tune.search.cli:main"
+eval-tune = "covid.tune.eval.cli:main"
+boxplot = "covid.tune.eval.result.visualization.cli:main"
 train = "covid.train.cli:main"
 eval = "covid.eval.cli:main"
 explain = "covid.explain.cli:main"
