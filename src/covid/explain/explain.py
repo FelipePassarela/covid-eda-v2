@@ -17,8 +17,10 @@ from covid.explain.tracker import ExplainingTracker
 def explain(spec: ExplainingSpec, tracker: ExplainingTracker) -> None:
     tracker.track_spec(spec)
     result = _explain(spec)
-    tracker.track_result(result)
-    result.close_plot()
+    try:
+        tracker.track_result(result)
+    finally:
+        result.close_plot()
 
 
 def _explain(spec: ExplainingSpec) -> ExplainingResult:
