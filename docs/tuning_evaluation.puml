@@ -1,0 +1,41 @@
+@startuml
+title Avaliação do tuning via Nested Cross-Validation
+
+start
+partition "Setup" {
+    :Carregar os dados;
+    :Instanciar pipeline e distribuição
+    de hiperparâmetros;
+
+    :Configurar tuning interno
+    (OptunaSearchCV / StratifiedKFold);
+
+    :Configurar avaliação externa
+    (RepeatedStratifiedKFold);
+}
+
+partition "Avaliação Externa" {
+    repeat
+        :Separar dados de treino e validação
+        do fold externo;
+
+        partition "Tuning Interno" {
+            :Avaliar combinações de hiperparâmetros
+            via validação cruzada nos dados de treino;
+
+            :Selecionar melhores hiperparâmetros;
+            :Reajustar pipeline nos dados de treino
+            do fold externo;
+        }
+
+        :Avaliar pipeline selecionado
+        nos dados de validação do fold externo;
+        :Registrar métricas e parâmetros do fold;
+    repeat while (Ainda existem folds externos?) is (sim) not (não)
+}
+
+:Agregar métricas e retornar o relatório
+de avaliação do processo de tuning;
+
+stop
+@enduml

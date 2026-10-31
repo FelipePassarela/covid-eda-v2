@@ -6,12 +6,12 @@ from sklearn.svm import LinearSVC
 from xgboost import XGBClassifier
 
 from covid.tune import TuningSpec
-from covid.tune.nested import NestedTuningResult, NestedTuningSpec
+from covid.tune.eval import TuningEvaluationResult, TuningEvaluationSpec
 
 
 @pytest.fixture()
-def nested_spec(spec: TuningSpec) -> NestedTuningSpec:
-    return NestedTuningSpec(inner=spec, n_outer_splits=3, n_outer_repeats=2)
+def evaluation_spec(spec: TuningSpec) -> TuningEvaluationSpec:
+    return TuningEvaluationSpec(inner=spec, n_outer_splits=3, n_outer_repeats=2)
 
 
 @pytest.fixture(
@@ -28,30 +28,32 @@ def nested_spec(spec: TuningSpec) -> NestedTuningSpec:
         ),
     ]
 )
-def nested_scoring_spec(
-    request: pytest.FixtureRequest, nested_spec: NestedTuningSpec
-) -> NestedTuningSpec:
+def evaluation_scoring_spec(
+    request: pytest.FixtureRequest, evaluation_spec: TuningEvaluationSpec
+) -> TuningEvaluationSpec:
     classifier, parameter, value = request.param
     metrics = ["roc_auc", "average_precision", "balanced_accuracy"]
     if hasattr(classifier, "predict_proba"):
         metrics.append("neg_log_loss")
 
-    return NestedTuningSpec(
+    return TuningEvaluationSpec(
         inner=TuningSpec(
             pipeline=Pipeline([("clf", classifier)]),
             param_distributions={f"clf__{parameter}": CategoricalDistribution([value])},
-            data_path=nested_spec.inner.data_path,
+            data_path=evaluation_spec.inner.data_path,
             n_searches=1,
             n_splits=2,
             n_fold_repeats=1,
             scoring=metrics,
         ),
-        n_outer_splits=nested_spec.n_outer_splits,
-        n_outer_repeats=nested_spec.n_outer_repeats,
+        n_outer_splits=evaluation_spec.n_outer_splits,
+        n_outer_repeats=evaluation_spec.n_outer_repeats,
     )
 
 
-def assert_nested_result(result: NestedTuningResult, spec: NestedTuningSpec) -> None:
+def assert_evaluation_result(
+    result: TuningEvaluationResult, spec: TuningEvaluationSpec
+) -> None:
     assert result.mean_test_scores
     assert result.std_test_scores
     assert set(result.mean_test_scores) == {f"test_{s}" for s in spec.inner.scoring}

@@ -1,6 +1,6 @@
 from pandas import DataFrame
 
-from covid.tune.nested.result.visualization.data import BoxplotData
+from covid.tune.eval.result.visualization.data import BoxplotData
 
 _METRIC_PRESENTER = {
     "test_balanced_accuracy": "Balanced Accuracy",

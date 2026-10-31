@@ -17,8 +17,8 @@ class NestedCVReport:
                 "NestedCVReport requires cross_validate(..., return_estimator=True)"
             )
         if not all(
-                isinstance(est, FittedSearchCV)
-                for est in cross_validated_scores["estimator"]
+            isinstance(est, FittedSearchCV)
+            for est in cross_validated_scores["estimator"]
         ):
             raise ValueError(
                 "All estimators must be instances of SearchCV — "

@@ -3,11 +3,13 @@ from typing import Any, Self
 
 import pandas as pd
 
-from covid.tune.nested.result.nested_cv_report import NestedCVReport
+from covid.tune.eval.result.nested_cv_report import NestedCVReport
 
 
 @dataclass(frozen=True)
-class NestedTuningResult:
+class TuningEvaluationResult:
+    """Summarize nested-CV scores, per-fold parameters, and the fold report."""
+
     mean_test_scores: dict[str, float]
     mean_train_scores: dict[str, float]
     std_test_scores: dict[str, float]

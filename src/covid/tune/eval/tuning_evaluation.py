@@ -1,3 +1,5 @@
+"""Estimate tuning performance on unseen data via nested cross-validation."""
+
 from functools import partial
 from typing import Any
 
@@ -14,31 +16,37 @@ from sklearn.model_selection import (
 from covid.common import constants
 from covid.common.data import load_and_split_data
 from covid.tune import TuningSpec
-from covid.tune.nested.result import NestedTuningResult
-from covid.tune.nested.spec import NestedTuningSpec
-from covid.tune.nested.tracking import NestedTuningTracker
+from covid.tune.eval.result import TuningEvaluationResult
+from covid.tune.eval.tracking import TuningEvaluationTracker
+from covid.tune.eval.tuning_evaluation_spec import TuningEvaluationSpec
 
 
-def nested_tune(
-    spec: NestedTuningSpec, tracker: NestedTuningTracker
-) -> NestedTuningResult:
+def evaluate_tuning(
+    spec: TuningEvaluationSpec, tracker: TuningEvaluationTracker
+) -> TuningEvaluationResult:
+    """Evaluate and track a tuning procedure across held-out outer folds.
+
+    Each outer fold runs its own inner hyperparameter search. The result
+    contains aggregate scores, per-fold parameters, and a fold report.
+    """
     tracker.track_spec(spec)
-    result = _nested_tune(spec)
+    result = _evaluate_tuning(spec)
     tracker.track_result(result)
     return result
 
 
-def _nested_tune(spec: NestedTuningSpec) -> NestedTuningResult:
+def _evaluate_tuning(spec: TuningEvaluationSpec) -> TuningEvaluationResult:
+    """Estimate the configured tuning procedure's generalization performance."""
     X, y = load_and_split_data(spec.inner.data_path)
 
-    inner_search = _create_inner_search(spec.inner)
-    outer_cv = _create_outer_cv(spec.n_outer_splits, spec.n_outer_repeats)
-    nested_scores = _run_nested_cv(X, y, inner_search, outer_cv, spec.inner.scoring)
+    inner_tune = _create_inner_tune(spec.inner)
+    outer_eval = _create_outer_eval(spec.n_outer_splits, spec.n_outer_repeats)
+    nested_scores = _run_nested_cv(X, y, inner_tune, outer_eval, spec.inner.scoring)
 
-    return NestedTuningResult.from_nested_scores(nested_scores)
+    return TuningEvaluationResult.from_nested_scores(nested_scores)
 
 
-def _create_inner_search(spec: TuningSpec) -> OptunaSearchCV:
+def _create_inner_tune(spec: TuningSpec) -> OptunaSearchCV:
     cv = StratifiedKFold(
         n_splits=spec.n_splits, shuffle=True, random_state=constants.RANDOM_STATE
     )
@@ -56,7 +64,7 @@ def _create_inner_search(spec: TuningSpec) -> OptunaSearchCV:
     )
 
 
-def _create_outer_cv(n_splits: int, n_repeats: int = 1) -> RepeatedStratifiedKFold:
+def _create_outer_eval(n_splits: int, n_repeats: int = 1) -> RepeatedStratifiedKFold:
     return RepeatedStratifiedKFold(
         n_splits=n_splits, n_repeats=n_repeats, random_state=constants.RANDOM_STATE
     )
@@ -65,20 +73,21 @@ def _create_outer_cv(n_splits: int, n_repeats: int = 1) -> RepeatedStratifiedKFo
 def _run_nested_cv(
     X: pd.DataFrame,
     y: pd.Series,
-    inner_search: OptunaSearchCV,
-    outer_cv: RepeatedStratifiedKFold,
+    inner_tune: OptunaSearchCV,
+    outer_eval: RepeatedStratifiedKFold,
     scoring: list[str],
 ) -> dict[str, Any]:
     logger.info(
-        "Running nested cross-validation with {} outer splits and {} inner splits",
-        outer_cv.get_n_splits(),
-        inner_search.cv.get_n_splits(),
+        "Evaluating tuning via nested cross-validation with {} outer evaluation "
+        "splits and {} inner tuning splits",
+        outer_eval.get_n_splits(),
+        inner_tune.cv.get_n_splits(),
     )
     return cross_validate(
-        inner_search,
+        inner_tune,
         X,
         y,
-        cv=outer_cv,
+        cv=outer_eval,
         scoring=partial(_score_best_estimator, scoring=scoring),
         return_estimator=True,
         n_jobs=-1,
