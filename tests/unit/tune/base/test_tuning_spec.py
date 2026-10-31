@@ -7,7 +7,7 @@ from optuna.distributions import CategoricalDistribution
 from pydantic import ValidationError
 from sklearn.dummy import DummyClassifier
 
-from covid.tune.base.spec import TuningSpec
+from covid.tune.search.tuning_spec import TuningSpec
 
 
 def _write_data_file(tmp_path: Path) -> Path:

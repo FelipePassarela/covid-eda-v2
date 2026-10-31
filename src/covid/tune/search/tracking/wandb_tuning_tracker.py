@@ -1,7 +1,8 @@
 from typing import Any, Self
 
 import wandb
-from covid.tune.base import TuningResult, TuningSpec
+from covid.tune.search.result import TuningResult
+from covid.tune.search.tuning_spec import TuningSpec
 from covid.tune.common.wand_utils import make_serializable, to_wandb_table
 
 

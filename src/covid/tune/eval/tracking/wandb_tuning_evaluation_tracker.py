@@ -1,10 +1,10 @@
 from typing import Any, Self
 
 import wandb
-from covid.tune.base.tracking import WAndBTuningTracker
 from covid.tune.common.wand_utils import make_serializable, to_wandb_table
 from covid.tune.eval.result import TuningEvaluationResult
 from covid.tune.eval.tuning_evaluation_spec import TuningEvaluationSpec
+from covid.tune.search.tracking import WAndBTuningTracker
 
 
 class WandBTuningEvaluationTracker:

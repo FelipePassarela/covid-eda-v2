@@ -3,7 +3,7 @@ from types import SimpleNamespace
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from covid.tune.base.result import TuningResult
+from covid.tune.search.result import TuningResult
 from covid.tune.common.cv_report import OptunaSearchCVAdapter
 
 

@@ -1,7 +1,7 @@
 from omegaconf import DictConfig
 
-from covid.tune.base.spec_factory import tuning_spec_from_config
 from covid.tune.eval.tuning_evaluation_spec import TuningEvaluationSpec
+from covid.tune.search.tuning_spec_factory import tuning_spec_from_config
 
 
 def tuning_evaluation_spec_from_config(config: DictConfig) -> TuningEvaluationSpec:

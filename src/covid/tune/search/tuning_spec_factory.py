@@ -3,7 +3,7 @@ from loguru import logger
 from omegaconf import DictConfig
 
 from covid.common.pipeline import build_pipeline_from_config
-from covid.tune import TuningSpec
+from covid.tune.search.tuning_spec import TuningSpec
 
 
 def tuning_spec_from_config(config: DictConfig) -> TuningSpec:

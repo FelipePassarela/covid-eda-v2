@@ -4,9 +4,9 @@ from omegaconf import DictConfig
 from covid.common import paths
 from covid.common.config_adapter import prepare_config_for_wandb
 from covid.common.logging import configure_logging, log_config
-from covid.tune.base import TuningSpec, tune
-from covid.tune.base.spec_factory import tuning_spec_from_config
-from covid.tune.base.tracking import WAndBTuningTracker
+from covid.tune.search import TuningSpec, tune
+from covid.tune.search.tracking import WAndBTuningTracker
+from covid.tune.search.tuning_spec_factory import tuning_spec_from_config
 
 
 @hydra.main(version_base=None, config_path=str(paths.CONF_DIR), config_name="tune")

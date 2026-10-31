@@ -4,7 +4,7 @@ from typing import Any, Self
 import pandas as pd
 from sklearn.base import BaseEstimator
 
-from covid.tune.base.result.search_cv_report import SearchCVReport
+from covid.tune.search.result.search_cv_report import SearchCVReport
 from covid.tune.common.cv_report import FittedSearchCV
 
 

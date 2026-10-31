@@ -1,7 +1,7 @@
 from typing import Protocol
 
-from covid.tune.base.spec import TuningSpec
-from covid.tune.base.tune import TuningResult
+from covid.tune.search.result import TuningResult
+from covid.tune.search.tuning_spec import TuningSpec
 
 
 class TuningTracker(Protocol):
