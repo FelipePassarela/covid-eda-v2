@@ -1,6 +1,7 @@
 from typing import Any, Self
 
 import wandb
+from covid.common.config_adapter import get_wandb_run_group
 from covid.tune.common.wand_utils import make_serializable, to_wandb_table
 from covid.tune.eval.result import TuningEvaluationResult
 from covid.tune.eval.tuning_evaluation_spec import TuningEvaluationSpec
@@ -21,6 +22,7 @@ class WandBTuningEvaluationTracker:
             name=self._run_name,
             job_type="tuning-evaluation",
             config=self._config,
+            group=get_wandb_run_group(self._config),
         )
         return self
 

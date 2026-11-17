@@ -5,6 +5,7 @@ import pandas as pd
 from sklearn.model_selection import TunedThresholdClassifierCV
 
 import wandb
+from covid.common.config_adapter import get_wandb_run_group
 
 
 class WAndBTrainingTracker:
@@ -18,6 +19,7 @@ class WAndBTrainingTracker:
             name=self._config["name"],
             job_type="train",
             config=self._config,
+            group=get_wandb_run_group(self._config),
         )
         return self
 

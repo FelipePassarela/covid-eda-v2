@@ -8,3 +8,8 @@ def prepare_config_for_wandb(config: DictConfig) -> dict[str, Any]:
         dict[str, Any],
         OmegaConf.to_container(config, resolve=True, throw_on_missing=True),
     )
+
+
+def get_wandb_run_group(config: dict[str, Any]) -> str | None:
+    wandb_config = config.get("wandb") or {}
+    return wandb_config.get("group")
