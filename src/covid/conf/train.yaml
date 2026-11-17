@@ -10,3 +10,6 @@ output_path: models/${name}.joblib
 
 tune_threshold: false
 tuning_scoring: balanced_accuracy
+
+wandb:
+  group: null

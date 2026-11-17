@@ -1,9 +1,10 @@
 from typing import Any, Self
 
 import wandb
+from covid.common.config_adapter import get_wandb_run_group
+from covid.tune.common.wand_utils import make_serializable, to_wandb_table
 from covid.tune.search.result import TuningResult
 from covid.tune.search.tuning_spec import TuningSpec
-from covid.tune.common.wand_utils import make_serializable, to_wandb_table
 
 
 class WAndBTuningTracker:
@@ -18,6 +19,7 @@ class WAndBTuningTracker:
             name=self._run_name,
             job_type="tuning",
             config=self._config,
+            group=get_wandb_run_group(self._config),
         )
         return self
 

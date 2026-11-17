@@ -8,3 +8,6 @@ name: ${hydra:runtime.choices.search}
 
 search:
   n_fold_repeats: 5
+
+wandb:
+  group: null

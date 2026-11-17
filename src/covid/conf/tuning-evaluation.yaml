@@ -12,3 +12,6 @@ search:
 outer_cv:
   n_splits: 5
   n_repeats: 6
+
+wandb:
+  group: null
