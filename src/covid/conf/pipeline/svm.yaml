@@ -4,4 +4,5 @@ defaults:
 
 classifier:
   _target_: sklearn.svm.SVC
+  probability: true  # Required by neg_log_loss in the shared scoring configuration.
   random_state: ${seed}
