@@ -1,4 +1,4 @@
-from typing import Any, Self
+from typing import Any, Literal, Self
 
 from imblearn.pipeline import Pipeline
 from optuna.distributions import BaseDistribution
@@ -23,6 +23,7 @@ class TuningSpec(BaseModel):
     n_searches: PositiveInt
     n_splits: PositiveInt = 5
     n_fold_repeats: PositiveInt = 5
+    n_jobs: Literal[-1] | PositiveInt | None = None
     scoring: list[str] = Field(
         default_factory=lambda: ["balanced_accuracy"], min_length=1
     )

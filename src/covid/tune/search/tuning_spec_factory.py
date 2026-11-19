@@ -20,6 +20,7 @@ def tuning_spec_from_config(config: DictConfig) -> TuningSpec:
         n_searches=search.n_searches,
         n_splits=search.n_splits,
         n_fold_repeats=search.n_fold_repeats,
+        n_jobs=search.get("n_jobs"),
         scoring=search.scoring,
         data_path=config.dataset.path,
     )
