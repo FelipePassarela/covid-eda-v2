@@ -3,11 +3,11 @@ from pathlib import Path
 import pandas as pd
 
 from covid.common.data import load_and_split_data
+from covid.common.pipeline import load_pipeline
 from covid.eval.context import EvaluationContext
 from covid.eval.result import EvaluationResult
 from covid.eval.result_presenter import present_evaluation_result
 from covid.eval.tracker import EvaluationTracker
-from covid.common.pipeline import load_pipeline
 
 
 def evaluate(pipeline_path: Path, data_path: Path, tracker: EvaluationTracker) -> None:
