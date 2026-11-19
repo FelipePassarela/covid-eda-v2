@@ -2,8 +2,8 @@ from typing import Any
 from unittest.mock import Mock
 
 import pytest
-
 import wandb
+
 from covid.train.wandb_tracker import WAndBTrainingTracker
 from covid.tune.eval.tracking.wandb_tuning_evaluation_tracker import (
     WandBTuningEvaluationTracker,

@@ -1,6 +1,7 @@
 from typing import Any, Self
 
 import wandb
+
 from covid.common.config_adapter import get_wandb_run_group
 from covid.tune.common.wand_utils import make_serializable, to_wandb_table
 from covid.tune.search.result import TuningResult
