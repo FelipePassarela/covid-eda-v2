@@ -60,6 +60,10 @@ train = "covid.train.cli:main"
 eval = "covid.eval.cli:main"
 explain = "covid.explain.cli:main"
 
+[tool.ruff.lint.isort]
+# W&B creates a local wandb/ directory for run artifacts.
+known-third-party = ["wandb"]
+
 [tool.pytest.ini_options]
 filterwarnings = [
     'ignore:OptunaSearchCV is experimental.*:optuna.exceptions.ExperimentalWarning',

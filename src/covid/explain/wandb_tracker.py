@@ -1,6 +1,7 @@
 from typing import Self
 
 import wandb
+
 from covid.explain.result import ExplainingResult
 from covid.explain.spec import ExplainingSpec
 

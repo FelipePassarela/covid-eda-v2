@@ -2,9 +2,9 @@ from pathlib import Path
 from typing import Self
 
 import pandas as pd
+import wandb
 from sklearn.model_selection import TunedThresholdClassifierCV
 
-import wandb
 from covid.common.config_adapter import get_wandb_run_group
 
 
