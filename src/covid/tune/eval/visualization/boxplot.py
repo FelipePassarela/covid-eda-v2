@@ -5,11 +5,9 @@ from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 
 from covid.common.paths import REPORTS_DIR
-from covid.tune.eval.result.visualization.data import (
-    BoxplotData,
-)
-from covid.tune.eval.result.visualization.io import create_boxplot_data, save_figure
-from covid.tune.eval.result.visualization.presenter import (
+from covid.tune.eval.visualization.data import BoxplotData
+from covid.tune.eval.visualization.io import create_boxplot_data, save_figure
+from covid.tune.eval.visualization.presenter import (
     format_boxplot_dataframe,
     present_metric,
 )
