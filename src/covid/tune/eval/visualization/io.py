@@ -5,7 +5,7 @@ from loguru import logger
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 
-from covid.tune.eval.result.visualization.data import BoxplotData
+from covid.tune.eval.visualization.data import BoxplotData
 
 
 def create_boxplot_data(cv_results_paths: list[Path], metric: str) -> BoxplotData:
