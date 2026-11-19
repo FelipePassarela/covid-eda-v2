@@ -9,7 +9,7 @@ from covid.eda.bivariate import association_summary
 
 
 class QValueSelector(BaseEstimator, TransformerMixin):
-    def __init__(self, q_value_threshold: float | int) -> None:
+    def __init__(self, q_value_threshold: float) -> None:
         self.q_value_threshold = q_value_threshold
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> Self:

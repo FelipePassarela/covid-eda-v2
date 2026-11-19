@@ -3,8 +3,8 @@ from types import SimpleNamespace
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from covid.tune.search.result import TuningResult
 from covid.tune.common.cv_report import OptunaSearchCVAdapter
+from covid.tune.search.result import TuningResult
 
 
 def test_adapter_handles_failed_trials_and_preserves_row_alignment(
