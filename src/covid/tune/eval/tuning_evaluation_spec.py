@@ -10,3 +10,4 @@ class TuningEvaluationSpec:
     inner: TuningSpec
     n_outer_splits: int
     n_outer_repeats: int
+    n_outer_jobs: int = -1

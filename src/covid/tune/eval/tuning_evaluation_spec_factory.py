@@ -9,4 +9,5 @@ def tuning_evaluation_spec_from_config(config: DictConfig) -> TuningEvaluationSp
         inner=tuning_spec_from_config(config),
         n_outer_splits=config.outer_cv.n_splits,
         n_outer_repeats=config.outer_cv.n_repeats,
+        n_outer_jobs=config.outer_cv.get("n_jobs", -1),
     )

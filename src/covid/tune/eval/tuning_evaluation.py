@@ -41,7 +41,14 @@ def _evaluate_tuning(spec: TuningEvaluationSpec) -> TuningEvaluationResult:
 
     inner_tune = _create_inner_tune(spec.inner)
     outer_eval = _create_outer_eval(spec.n_outer_splits, spec.n_outer_repeats)
-    nested_scores = _run_nested_cv(X, y, inner_tune, outer_eval, spec.inner.scoring)
+    nested_scores = _run_nested_cv(
+        X,
+        y,
+        inner_tune=inner_tune,
+        outer_eval=outer_eval,
+        scoring=spec.inner.scoring,
+        n_jobs=spec.n_outer_jobs,
+    )
 
     return TuningEvaluationResult.from_nested_scores(nested_scores)
 
@@ -59,7 +66,7 @@ def _create_inner_tune(spec: TuningSpec) -> OptunaSearchCV:
         cv=cv,
         return_train_score=True,
         random_state=constants.RANDOM_STATE,
-        n_jobs=1,
+        n_jobs=spec.n_jobs,
         enable_pruning=False,
     )
 
@@ -73,9 +80,11 @@ def _create_outer_eval(n_splits: int, n_repeats: int = 1) -> RepeatedStratifiedK
 def _run_nested_cv(
     X: pd.DataFrame,
     y: pd.Series,
+    *,
     inner_tune: OptunaSearchCV,
     outer_eval: RepeatedStratifiedKFold,
     scoring: list[str],
+    n_jobs: int,
 ) -> dict[str, Any]:
     logger.info(
         "Evaluating tuning via nested cross-validation with {} outer evaluation "
@@ -90,7 +99,7 @@ def _run_nested_cv(
         cv=outer_eval,
         scoring=partial(_score_best_estimator, scoring=scoring),
         return_estimator=True,
-        n_jobs=-1,
+        n_jobs=n_jobs,
         verbose=3,
         error_score="raise",
     )

@@ -5,10 +5,10 @@ from sklearn.model_selection import (
 
 from covid.common import constants
 from covid.common.data import load_and_split_data
+from covid.tune.common.cv_report import OptunaSearchCVAdapter
 from covid.tune.search.result import TuningResult
 from covid.tune.search.tracking import TuningTracker
 from covid.tune.search.tuning_spec import TuningSpec
-from covid.tune.common.cv_report import OptunaSearchCVAdapter
 
 
 def tune(spec: TuningSpec, tracker: TuningTracker) -> TuningResult:
@@ -43,5 +43,5 @@ def _create_search(spec: TuningSpec) -> OptunaSearchCV:
         return_train_score=True,
         enable_pruning=False,
         random_state=constants.RANDOM_STATE,
-        n_jobs=-1,
+        n_jobs=spec.n_jobs,
     )
