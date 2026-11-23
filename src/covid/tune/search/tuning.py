@@ -1,7 +1,4 @@
 from optuna_integration import OptunaSearchCV
-from sklearn.model_selection import (
-    RepeatedStratifiedKFold,
-)
 
 from covid.common import constants
 from covid.common.data import load_and_split_data
@@ -20,25 +17,20 @@ def tune(spec: TuningSpec, tracker: TuningTracker) -> TuningResult:
 
 def _tune(spec: TuningSpec) -> TuningResult:
     X, y = load_and_split_data(spec.data_path)
-    search = _create_search(spec)
+    search = build_optuna_search(spec)
     search.fit(X, y)
     fitted_search = OptunaSearchCVAdapter(search, spec.scoring[0])
     return TuningResult.from_fitted_search(fitted_search)
 
 
-def _create_search(spec: TuningSpec) -> OptunaSearchCV:
-    cv = RepeatedStratifiedKFold(
-        n_splits=spec.n_splits,
-        n_repeats=spec.n_fold_repeats,
-        random_state=constants.RANDOM_STATE,
-    )
+def build_optuna_search(spec: TuningSpec) -> OptunaSearchCV:
     # noinspection bad-argument-type
     return OptunaSearchCV(
         estimator=spec.pipeline,
         param_distributions=spec.param_distributions,
         n_trials=spec.n_searches,
         scoring=spec.scoring[0],
-        cv=cv,
+        cv=spec.cv,
         refit=True,
         return_train_score=True,
         enable_pruning=False,

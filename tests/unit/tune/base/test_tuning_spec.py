@@ -6,6 +6,7 @@ from imblearn.pipeline import Pipeline
 from optuna.distributions import CategoricalDistribution
 from pydantic import ValidationError
 from sklearn.dummy import DummyClassifier
+from sklearn.model_selection import StratifiedKFold
 
 from covid.tune.search.tuning_spec import TuningSpec
 
@@ -22,6 +23,7 @@ def test_tuning_spec_accepts_optuna_distributions(tmp_path: Path) -> None:
         pipeline=Pipeline([("clf", DummyClassifier())]),
         param_distributions={"clf__strategy": distribution},
         n_searches=2,
+        cv=StratifiedKFold(n_splits=2),
         data_path=_write_data_file(tmp_path),
     )
 
@@ -49,5 +51,6 @@ def test_tuning_spec_rejects_invalid_search_spaces(
             pipeline=Pipeline([("clf", DummyClassifier())]),
             param_distributions=distributions,
             n_searches=2,
+            cv=StratifiedKFold(n_splits=2),
             data_path=_write_data_file(tmp_path),
         )

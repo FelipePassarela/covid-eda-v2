@@ -7,18 +7,13 @@ import pandas as pd
 from loguru import logger
 from optuna_integration import OptunaSearchCV
 from sklearn.metrics import get_scorer
-from sklearn.model_selection import (
-    RepeatedStratifiedKFold,
-    StratifiedKFold,
-    cross_validate,
-)
+from sklearn.model_selection import cross_validate
 
-from covid.common import constants
 from covid.common.data import load_and_split_data
-from covid.tune import TuningSpec
 from covid.tune.eval.result import TuningEvaluationResult
 from covid.tune.eval.tracking import TuningEvaluationTracker
 from covid.tune.eval.tuning_evaluation_spec import TuningEvaluationSpec
+from covid.tune.search.tuning import build_optuna_search
 
 
 def evaluate_tuning(
@@ -38,68 +33,31 @@ def evaluate_tuning(
 def _evaluate_tuning(spec: TuningEvaluationSpec) -> TuningEvaluationResult:
     """Estimate the configured tuning procedure's generalization performance."""
     X, y = load_and_split_data(spec.inner.data_path)
-
-    inner_tune = _create_inner_tune(spec.inner)
-    outer_eval = _create_outer_eval(spec.n_outer_splits, spec.n_outer_repeats)
-    nested_scores = _run_nested_cv(
-        X,
-        y,
-        inner_tune=inner_tune,
-        outer_eval=outer_eval,
-        scoring=spec.inner.scoring,
-        n_jobs=spec.n_outer_jobs,
-    )
-
+    nested_scores = _run_nested_cv(X, y, spec)
     return TuningEvaluationResult.from_nested_scores(nested_scores)
-
-
-def _create_inner_tune(spec: TuningSpec) -> OptunaSearchCV:
-    cv = StratifiedKFold(
-        n_splits=spec.n_splits, shuffle=True, random_state=constants.RANDOM_STATE
-    )
-    return OptunaSearchCV(
-        estimator=spec.pipeline,
-        param_distributions=spec.param_distributions,
-        n_trials=spec.n_searches,
-        scoring=spec.scoring[0],
-        refit=True,
-        cv=cv,
-        return_train_score=True,
-        random_state=constants.RANDOM_STATE,
-        n_jobs=spec.n_jobs,
-        enable_pruning=False,
-    )
-
-
-def _create_outer_eval(n_splits: int, n_repeats: int = 1) -> RepeatedStratifiedKFold:
-    return RepeatedStratifiedKFold(
-        n_splits=n_splits, n_repeats=n_repeats, random_state=constants.RANDOM_STATE
-    )
 
 
 def _run_nested_cv(
     X: pd.DataFrame,
     y: pd.Series,
-    *,
-    inner_tune: OptunaSearchCV,
-    outer_eval: RepeatedStratifiedKFold,
-    scoring: list[str],
-    n_jobs: int,
+    spec: TuningEvaluationSpec,
 ) -> dict[str, Any]:
+    inner_search = build_optuna_search(spec.inner)
+    scorer = partial(_score_best_estimator, scoring=spec.inner.scoring)
     logger.info(
         "Evaluating tuning via nested cross-validation with {} outer evaluation "
         "splits and {} inner tuning splits",
-        outer_eval.get_n_splits(),
-        inner_tune.cv.get_n_splits(),
+        spec.outer_cv.get_n_splits(),
+        spec.inner.cv.get_n_splits(),
     )
     return cross_validate(
-        inner_tune,
+        inner_search,
         X,
         y,
-        cv=outer_eval,
-        scoring=partial(_score_best_estimator, scoring=scoring),
+        cv=spec.outer_cv,
+        scoring=scorer,
         return_estimator=True,
-        n_jobs=n_jobs,
+        n_jobs=spec.n_outer_jobs,
         verbose=3,
         error_score="raise",
     )

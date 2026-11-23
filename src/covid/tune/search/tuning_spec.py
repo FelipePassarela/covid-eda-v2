@@ -12,6 +12,8 @@ from pydantic import (
     model_validator,
 )
 
+from covid.tune.common.cross_validation import TuningCV
+
 
 class TuningSpec(BaseModel):
     model_config = ConfigDict(
@@ -21,8 +23,7 @@ class TuningSpec(BaseModel):
     pipeline: Pipeline
     param_distributions: dict[str, BaseDistribution]
     n_searches: PositiveInt
-    n_splits: PositiveInt = 5
-    n_fold_repeats: PositiveInt = 5
+    cv: TuningCV
     n_jobs: Literal[-1] | PositiveInt | None = None
     scoring: list[str] = Field(
         default_factory=lambda: ["balanced_accuracy"], min_length=1
@@ -50,6 +51,10 @@ class TuningSpec(BaseModel):
     @field_serializer("pipeline")
     def serialize_pipeline(self, pipeline: Pipeline) -> str:
         return repr(pipeline)
+
+    @field_serializer("cv")
+    def serialize_cv(self, cv: TuningCV) -> str:
+        return repr(cv)
 
     @field_serializer("param_distributions")
     def serialize_param_distributions(

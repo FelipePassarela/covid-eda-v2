@@ -7,7 +7,9 @@ from imblearn.pipeline import Pipeline
 from omegaconf import DictConfig
 from optuna.distributions import CategoricalDistribution
 from sklearn.dummy import DummyClassifier
+from sklearn.model_selection import RepeatedStratifiedKFold
 
+from covid.common.constants import RANDOM_STATE
 from covid.common.paths import CONF_DIR
 from covid.tune import TuningSpec
 
@@ -18,6 +20,7 @@ def spec(tmp_path: Path, classification_df: pd.DataFrame) -> TuningSpec:
     classification_df.to_csv(data_path, index=False)
 
     classifier = DummyClassifier(strategy="most_frequent")
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=1, random_state=RANDOM_STATE)
 
     return TuningSpec(
         data_path=data_path,
@@ -26,14 +29,16 @@ def spec(tmp_path: Path, classification_df: pd.DataFrame) -> TuningSpec:
             "clf__strategy": CategoricalDistribution(["most_frequent", "stratified"])
         },
         n_searches=2,
-        n_fold_repeats=1,
+        cv=cv,
         scoring=["accuracy", "balanced_accuracy"],
     )
 
 
 @pytest.fixture()
 def standalone_tuning_config(data_path: Path) -> DictConfig:
-    return _compose_small_config("tune", data_path, ["search.n_jobs=2"])
+    return _compose_small_config(
+        "tune", data_path, ["search.n_jobs=2", "search.n_fold_repeats=3"]
+    )
 
 
 @pytest.fixture()
@@ -45,7 +50,7 @@ def nested_tuning_config(data_path: Path) -> DictConfig:
             "search.n_jobs=3",
             "outer_cv.n_jobs=1",
             "outer_cv.n_splits=2",
-            "outer_cv.n_repeats=1",
+            "outer_cv.n_repeats=2",
         ],
     )
 
@@ -59,7 +64,6 @@ def _compose_small_config(
             overrides=[
                 "search.n_searches=1",
                 "search.n_splits=2",
-                "search.n_fold_repeats=1",
                 "search.scoring=[balanced_accuracy]",
                 "search.pipeline.preprocessor.order=[]",
                 *overrides,

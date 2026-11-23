@@ -3,6 +3,7 @@ from typing import Any, Self
 import wandb
 
 from covid.common.config_adapter import get_wandb_run_group
+from covid.tune.common.cross_validation import get_cv_fold_counts
 from covid.tune.common.wand_utils import make_serializable, to_wandb_table
 from covid.tune.search.result import TuningResult
 from covid.tune.search.tuning_spec import TuningSpec
@@ -38,6 +39,7 @@ class WAndBTuningTracker:
     def track_spec_for_run(run: wandb.Run, spec: TuningSpec, group: str = "") -> None:
         param_dist = make_serializable(spec.param_distributions)
         pipeline = make_serializable(spec.pipeline.steps)
+        n_splits_per_repeat, n_repeats = get_cv_fold_counts(spec.cv)
 
         run.config.update(
             {
@@ -45,7 +47,9 @@ class WAndBTuningTracker:
                 f"{group}/pipeline/steps": pipeline,
                 f"{group}/search/param_distributions": param_dist,
                 f"{group}/search/n_searches": spec.n_searches,
-                f"{group}/search/n_fold_repeats": spec.n_fold_repeats,
+                f"{group}/search/cv": repr(spec.cv),
+                f"{group}/search/n_splits": n_splits_per_repeat,
+                f"{group}/search/n_fold_repeats": n_repeats,
                 f"{group}/search/scoring": spec.scoring,
             }
         )
