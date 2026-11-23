@@ -2,16 +2,23 @@ import pytest
 from imblearn.pipeline import Pipeline
 from optuna.distributions import CategoricalDistribution
 from sklearn.dummy import DummyClassifier
+from sklearn.model_selection import RepeatedStratifiedKFold, StratifiedKFold
 from sklearn.svm import LinearSVC
 from xgboost import XGBClassifier
 
+from covid.common.constants import RANDOM_STATE
 from covid.tune import TuningSpec
 from covid.tune.eval import TuningEvaluationResult, TuningEvaluationSpec
 
 
 @pytest.fixture()
 def evaluation_spec(spec: TuningSpec) -> TuningEvaluationSpec:
-    return TuningEvaluationSpec(inner=spec, n_outer_splits=3, n_outer_repeats=2)
+    inner_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_STATE)
+    inner = spec.model_copy(update={"cv": inner_cv})
+    outer_cv = RepeatedStratifiedKFold(
+        n_splits=3, n_repeats=2, random_state=RANDOM_STATE
+    )
+    return TuningEvaluationSpec(inner=inner, outer_cv=outer_cv)
 
 
 @pytest.fixture(
@@ -36,19 +43,16 @@ def evaluation_scoring_spec(
     if hasattr(classifier, "predict_proba"):
         metrics.append("neg_log_loss")
 
-    return TuningEvaluationSpec(
-        inner=TuningSpec(
-            pipeline=Pipeline([("clf", classifier)]),
-            param_distributions={f"clf__{parameter}": CategoricalDistribution([value])},
-            data_path=evaluation_spec.inner.data_path,
-            n_searches=1,
-            n_splits=2,
-            n_fold_repeats=1,
-            scoring=metrics,
-        ),
-        n_outer_splits=evaluation_spec.n_outer_splits,
-        n_outer_repeats=evaluation_spec.n_outer_repeats,
+    inner_cv = StratifiedKFold(n_splits=2, shuffle=True, random_state=RANDOM_STATE)
+    inner = TuningSpec(
+        pipeline=Pipeline([("clf", classifier)]),
+        param_distributions={f"clf__{parameter}": CategoricalDistribution([value])},
+        data_path=evaluation_spec.inner.data_path,
+        n_searches=1,
+        cv=inner_cv,
+        scoring=metrics,
     )
+    return TuningEvaluationSpec(inner=inner, outer_cv=evaluation_spec.outer_cv)
 
 
 def assert_evaluation_result(
@@ -59,6 +63,6 @@ def assert_evaluation_result(
     assert set(result.mean_test_scores) == {f"test_{s}" for s in spec.inner.scoring}
     assert set(result.std_test_scores) == {f"test_{s}" for s in spec.inner.scoring}
 
-    assert len(result.params_per_fold) == spec.n_outer_splits * spec.n_outer_repeats
+    assert len(result.params_per_fold) == spec.outer_cv.get_n_splits()
     assert not result.cv_report.empty
     assert len(result.cv_report) == len(result.params_per_fold)

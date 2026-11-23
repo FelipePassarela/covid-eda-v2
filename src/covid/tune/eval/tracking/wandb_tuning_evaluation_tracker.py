@@ -3,6 +3,7 @@ from typing import Any, Self
 import wandb
 
 from covid.common.config_adapter import get_wandb_run_group
+from covid.tune.common.cross_validation import get_cv_fold_counts
 from covid.tune.common.wand_utils import make_serializable, to_wandb_table
 from covid.tune.eval.result import TuningEvaluationResult
 from covid.tune.eval.tuning_evaluation_spec import TuningEvaluationSpec
@@ -36,7 +37,14 @@ class WandBTuningEvaluationTracker:
             raise RuntimeError("This class must be used as a context manager.")
 
         WAndBTuningTracker.track_spec_for_run(self._run, spec.inner, group="inner")
-        self._run.config["outer/n_splits"] = spec.n_outer_splits
+        n_splits_per_repeat, n_repeats = get_cv_fold_counts(spec.outer_cv)
+        self._run.config.update(
+            {
+                "outer/cv": repr(spec.outer_cv),
+                "outer/n_splits": n_splits_per_repeat,
+                "outer/n_repeats": n_repeats,
+            }
+        )
 
     def track_result(self, result: TuningEvaluationResult) -> None:
         if not self._run:
