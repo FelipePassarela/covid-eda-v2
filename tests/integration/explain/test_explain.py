@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 from imblearn.pipeline import Pipeline
 from matplotlib import pyplot as plt
+from sklearn.svm import SVC
 
 from covid.common.feature import TARGET
 from covid.explain import ExplainingSpec, explain
@@ -62,6 +63,30 @@ def test_explain_produces_shap_values_matching_classifier_predictions(
     shap_log_odds = explanation.base_values + explanation.values.sum(axis=1)
     classifier_log_odds = fitted_pipeline[-1].decision_function(foreground)
     np.testing.assert_allclose(shap_log_odds, classifier_log_odds, rtol=1e-6, atol=1e-6)
+
+
+@pytest.mark.parametrize(
+    "pipeline_classifier",
+    [
+        pytest.param(
+            SVC(kernel="linear", probability=True, random_state=42), id="linear"
+        ),
+        pytest.param(SVC(kernel="rbf", probability=True, random_state=42), id="rbf"),
+    ],
+)
+def test_explain_svc_attributes_positive_class_probability(
+    explaining_result: ExplainingResult, fitted_pipeline: Pipeline
+) -> None:
+    explanation = explaining_result.explanation
+    foreground = explaining_result.X_foreground
+    classifier = fitted_pipeline[-1]
+    positive_class_index = list(classifier.classes_).index(1)
+    class_probabilities = classifier.predict_proba(foreground)
+    expected_probabilities = class_probabilities[:, positive_class_index]
+
+    assert explanation.values.shape == foreground.shape
+    shap_probabilities = explanation.base_values + explanation.values.sum(axis=1)
+    np.testing.assert_allclose(shap_probabilities, expected_probabilities)
 
 
 def test_explain_sorts_feature_importances_by_magnitude(

@@ -6,14 +6,15 @@ import shap
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from shap import Explanation
-from sklearn.base import BaseEstimator
+
+from covid.explain.shap_model import ShapModel
 
 
 def create_shap_explanation(
-    X_background: pd.DataFrame, X_foreground: pd.DataFrame, classifier: BaseEstimator
+    X_background: pd.DataFrame, X_foreground: pd.DataFrame, model: ShapModel
 ) -> Explanation:
     masker = shap.maskers.Independent(X_background, max_samples=len(X_background))
-    explainer = shap.Explainer(classifier, masker=masker)
+    explainer = shap.Explainer(model, masker=masker)
     explanation = explainer(X_foreground)
     return cast(Explanation, explanation)
 
