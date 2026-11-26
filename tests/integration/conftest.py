@@ -7,6 +7,7 @@ import pandas as pd
 import pytest
 from imblearn.pipeline import Pipeline
 from loguru import logger
+from sklearn.base import BaseEstimator
 from sklearn.datasets import make_classification
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
@@ -36,11 +37,18 @@ def data_path(tmp_path: Path, classification_df: pd.DataFrame) -> Path:
 
 
 @pytest.fixture()
-def fitted_pipeline(classification_df: pd.DataFrame) -> Pipeline:
+def pipeline_classifier() -> BaseEstimator:
+    return LogisticRegression(random_state=42)
+
+
+@pytest.fixture()
+def fitted_pipeline(
+    classification_df: pd.DataFrame, pipeline_classifier: BaseEstimator
+) -> Pipeline:
     pipeline = Pipeline(
         steps=[
             ("scaler", StandardScaler().set_output(transform="pandas")),
-            ("clf", LogisticRegression(random_state=42)),
+            ("clf", pipeline_classifier),
         ]
     )
     pipeline.fit(classification_df.drop(columns=TARGET), classification_df[TARGET])

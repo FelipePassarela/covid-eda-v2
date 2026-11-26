@@ -10,6 +10,7 @@ from covid.explain.shap_calculator import (
     extract_background_from,
     plot_shap_explanation,
 )
+from covid.explain.shap_model import model_for_shap
 from covid.explain.spec import ExplainingSpec
 from covid.explain.tracker import ExplainingTracker
 
@@ -30,7 +31,8 @@ def _explain(spec: ExplainingSpec) -> ExplainingResult:
     X_foreground = load_and_transform_features(spec.data_path, preprocessor)
     X_background = extract_background_from(X_foreground)
 
-    explanation = create_shap_explanation(X_background, X_foreground, classifier)
+    shap_model = model_for_shap(classifier, positive_label=1)
+    explanation = create_shap_explanation(X_background, X_foreground, shap_model)
     importances = calculate_shap_importances(explanation)
 
     beeswarm_plot = plot_shap_explanation(explanation, max_display=spec.max_display)
