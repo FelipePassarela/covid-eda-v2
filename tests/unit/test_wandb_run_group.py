@@ -4,11 +4,11 @@ from unittest.mock import Mock
 import pytest
 import wandb
 
-from covid.train.wandb_tracker import WAndBTrainingTracker
-from covid.tune.eval.tracking.wandb_tuning_evaluation_tracker import (
+from covid_model.train.wandb_tracker import WAndBTrainingTracker
+from covid_tuning.eval.tracking.wandb_tuning_evaluation_tracker import (
     WandBTuningEvaluationTracker,
 )
-from covid.tune.search.tracking.wandb_tuning_tracker import WAndBTuningTracker
+from covid_tuning.search.tracking.wandb_tuning_tracker import WAndBTuningTracker
 
 
 @pytest.mark.parametrize(

@@ -1,0 +1,27 @@
+[project]
+name = "covid-common"
+version = "0.1.0"
+description = "Shared data preparation and model pipelines for COVID-EDA"
+requires-python = "==3.13.*"
+dependencies = [
+    "catboost>=1.2.10",
+    "hydra-core>=1.3.4",
+    "imbalanced-learn>=0.14.2",
+    "joblib>=1.5.3",
+    "lightgbm>=4.7.0",
+    "loguru>=0.7.3",
+    "mrmr-selection>=0.2.8",
+    "numpy>=2.4.6",
+    "omegaconf>=2.3.1",
+    "pandas>=3.0.3",
+    "scikit-learn>=1.9.0",
+    "typer>=0.26.7",
+    "xgboost>=3.3.0",
+]
+
+[project.scripts]
+split = "covid_common.ingest.split_data:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

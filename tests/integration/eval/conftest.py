@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from covid.eval import evaluate
-from covid.eval.tracker import EvaluationTracker
+from covid_model.eval import evaluate
+from covid_model.eval.tracker import EvaluationTracker
 
 
 @pytest.fixture()

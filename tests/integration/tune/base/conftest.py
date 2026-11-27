@@ -5,7 +5,7 @@ from imblearn.pipeline import Pipeline
 from sklearn.dummy import DummyClassifier
 from sklearn.utils.validation import check_is_fitted
 
-from covid.tune import TuningResult, TuningSpec
+from covid_tuning import TuningResult, TuningSpec
 
 
 def assert_result(result: TuningResult, spec: TuningSpec) -> None:

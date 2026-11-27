@@ -1,8 +1,8 @@
 import pandas as pd
 import pytest
 
-from covid.tune.eval.visualization.data import BoxplotData
-from covid.tune.eval.visualization.presenter import (
+from covid_tuning.eval.visualization.data import BoxplotData
+from covid_tuning.eval.visualization.presenter import (
     format_boxplot_dataframe,
     present_metric,
 )

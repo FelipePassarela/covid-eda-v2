@@ -6,9 +6,9 @@ from sklearn.model_selection import RepeatedStratifiedKFold, StratifiedKFold
 from sklearn.svm import LinearSVC
 from xgboost import XGBClassifier
 
-from covid.common.constants import RANDOM_STATE
-from covid.tune import TuningSpec
-from covid.tune.eval import TuningEvaluationResult, TuningEvaluationSpec
+from covid_common.constants import RANDOM_STATE
+from covid_tuning import TuningSpec
+from covid_tuning.eval import TuningEvaluationResult, TuningEvaluationSpec
 
 
 @pytest.fixture()

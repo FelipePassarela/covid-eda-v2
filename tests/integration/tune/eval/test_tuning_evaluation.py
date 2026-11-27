@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 import numpy as np
 
-from covid.tune.eval import TuningEvaluationSpec
-from covid.tune.eval.tuning_evaluation import evaluate_tuning
+from covid_tuning.eval import TuningEvaluationSpec
+from covid_tuning.eval.tuning_evaluation import evaluate_tuning
 from tests.integration.tune.eval.conftest import assert_evaluation_result
 
 

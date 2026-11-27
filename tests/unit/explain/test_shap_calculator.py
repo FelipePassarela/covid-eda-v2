@@ -6,7 +6,7 @@ import shap
 from matplotlib import pyplot as plt
 from shap import Explanation
 
-from covid.explain.shap_calculator import (
+from covid_model.explain.shap_calculator import (
     calculate_shap_importances,
     extract_background_from,
     plot_shap_explanation,
@@ -55,7 +55,7 @@ def test_background_preserves_rows_and_samples_reproducibly(
 def test_plot_creates_figure_without_displaying_it(
     explanation: Explanation, max_display: int, existing_figures: set[int]
 ) -> None:
-    patch_target = "covid.explain.shap_calculator.shap.plots.beeswarm"
+    patch_target = "covid_model.explain.shap_calculator.shap.plots.beeswarm"
     with patch(patch_target, wraps=shap.plots.beeswarm) as beeswarm:
         figure = plot_shap_explanation(explanation, max_display=max_display)
 

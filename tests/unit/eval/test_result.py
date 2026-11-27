@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from covid.eval.result import EvaluationResult
+from covid_model.eval.result import EvaluationResult
 
 
 def test_from_predictions_computes_metrics() -> None:

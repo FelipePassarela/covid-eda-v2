@@ -8,8 +8,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import TunedThresholdClassifierCV
 from sklearn.utils.validation import check_is_fitted
 
-from covid.common.pipeline import load_pipeline
-from covid.train import TrainingSpec
+from covid_common.pipeline import load_pipeline
+from covid_model.train import TrainingSpec
 
 
 @pytest.fixture()

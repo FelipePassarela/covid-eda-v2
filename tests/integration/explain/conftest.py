@@ -3,9 +3,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from covid.explain import ExplainingSpec, explain
-from covid.explain.result import ExplainingResult
-from covid.explain.tracker import ExplainingTracker
+from covid_model.explain import ExplainingSpec, explain
+from covid_model.explain.result import ExplainingResult
+from covid_model.explain.tracker import ExplainingTracker
 
 
 @pytest.fixture()

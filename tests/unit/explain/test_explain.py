@@ -3,9 +3,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from covid.explain import ExplainingSpec, explain
-from covid.explain.result import ExplainingResult
-from covid.explain.tracker import ExplainingTracker
+from covid_model.explain import ExplainingSpec, explain
+from covid_model.explain.result import ExplainingResult
+from covid_model.explain.tracker import ExplainingTracker
 
 
 def test_explain_closes_plot_when_tracking_fails() -> None:
@@ -15,7 +15,7 @@ def test_explain_closes_plot_when_tracking_fails() -> None:
     tracker.track_result.side_effect = RuntimeError("tracking failed")
 
     with (
-        patch("covid.explain.explain._explain", return_value=result),
+        patch("covid_model.explain.explain._explain", return_value=result),
         pytest.raises(RuntimeError, match="tracking failed"),
     ):
         explain(spec, tracker)

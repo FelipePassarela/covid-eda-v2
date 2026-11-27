@@ -1,7 +1,7 @@
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from hydra import compose, initialize_config_dir
+from hydra import compose, initialize_config_module
 from omegaconf import DictConfig
 from optuna_integration import OptunaSearchCV
 from sklearn.model_selection import (
@@ -10,15 +10,14 @@ from sklearn.model_selection import (
     cross_validate,
 )
 
-from covid.common.constants import RANDOM_STATE
-from covid.common.paths import CONF_DIR
-from covid.tune import tune
-from covid.tune.eval import evaluate_tuning
-from covid.tune.eval.tracking import WandBTuningEvaluationTracker
-from covid.tune.eval.tuning_evaluation_spec_factory import (
+from covid_common.constants import RANDOM_STATE
+from covid_tuning import tune
+from covid_tuning.eval import evaluate_tuning
+from covid_tuning.eval.tracking import WandBTuningEvaluationTracker
+from covid_tuning.eval.tuning_evaluation_spec_factory import (
     tuning_evaluation_spec_from_config,
 )
-from covid.tune.search.tuning_spec_factory import tuning_spec_from_config
+from covid_tuning.search.tuning_spec_factory import tuning_spec_from_config
 
 
 def test_tune_uses_configured_cv_and_parallelism(
@@ -27,7 +26,7 @@ def test_tune_uses_configured_cv_and_parallelism(
     spec = tuning_spec_from_config(standalone_tuning_config)
 
     with patch(
-        "covid.tune.search.tuning.OptunaSearchCV", wraps=OptunaSearchCV
+        "covid_tuning.search.tuning.OptunaSearchCV", wraps=OptunaSearchCV
     ) as optuna_search:
         tune(spec, tracker=Mock())
 
@@ -45,7 +44,7 @@ def test_eval_tune_uses_configured_cv_and_parallelism(
     evaluation_spec = tuning_evaluation_spec_from_config(nested_tuning_config)
 
     with patch(
-        "covid.tune.eval.tuning_evaluation.cross_validate", wraps=cross_validate
+        "covid_tuning.eval.tuning_evaluation.cross_validate", wraps=cross_validate
     ) as validate:
         result = evaluate_tuning(evaluation_spec, tracker=Mock())
 
@@ -61,7 +60,7 @@ def test_eval_tune_uses_configured_cv_and_parallelism(
 
 
 def test_factories_preserve_default_cross_validation(data_path: Path) -> None:
-    with initialize_config_dir(config_dir=str(CONF_DIR), version_base=None):
+    with initialize_config_module(config_module="covid_tuning.conf", version_base=None):
         standalone_config = compose(config_name="tune")
         evaluation_config = compose(config_name="tuning-evaluation")
     standalone_config.dataset.path = str(data_path)

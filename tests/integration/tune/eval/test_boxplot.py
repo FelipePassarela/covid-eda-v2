@@ -8,8 +8,8 @@ from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.image import imread
 
-from covid.tune.eval.visualization.cli import main
-from covid.tune.eval.visualization.io import create_boxplot_data
+from covid_tuning.eval.visualization.cli import main
+from covid_tuning.eval.visualization.io import create_boxplot_data
 
 
 def test_create_boxplot_data_reads_selected_metric_from_each_csv(

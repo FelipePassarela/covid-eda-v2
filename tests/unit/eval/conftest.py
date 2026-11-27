@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from imblearn.pipeline import Pipeline
 
-from covid.eval.context import EvaluationContext
+from covid_model.eval.context import EvaluationContext
 
 
 @pytest.fixture()

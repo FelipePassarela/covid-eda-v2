@@ -8,10 +8,10 @@ from imblearn.pipeline import Pipeline
 from matplotlib import pyplot as plt
 from sklearn.svm import SVC
 
-from covid.common.feature import TARGET
-from covid.explain import ExplainingSpec, explain
-from covid.explain.result import ExplainingResult
-from covid.explain.tracker import ExplainingTracker
+from covid_common.feature import TARGET
+from covid_model.explain import ExplainingSpec, explain
+from covid_model.explain.result import ExplainingResult
+from covid_model.explain.tracker import ExplainingTracker
 
 
 def assert_plot_is_open(result: ExplainingResult) -> None:

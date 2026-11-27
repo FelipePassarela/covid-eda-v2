@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from covid.tune.eval.visualization.data import BoxplotData
+from covid_tuning.eval.visualization.data import BoxplotData
 
 
 def test_boxplot_data_preserves_model_and_fold_order() -> None:

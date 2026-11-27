@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from covid.common.feature import ID, TARGET
+from covid_common.feature import ID, TARGET
 
 
 @pytest.fixture()

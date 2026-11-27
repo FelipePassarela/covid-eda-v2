@@ -6,11 +6,11 @@ import pandas as pd
 import pytest
 from imblearn.pipeline import Pipeline
 
-from covid.common.feature import TARGET
-from covid.eval import evaluate
-from covid.eval.context import EvaluationContext
-from covid.eval.result import EvaluationResult
-from covid.eval.tracker import EvaluationTracker
+from covid_common.feature import TARGET
+from covid_model.eval import evaluate
+from covid_model.eval.context import EvaluationContext
+from covid_model.eval.result import EvaluationResult
+from covid_model.eval.tracker import EvaluationTracker
 
 
 def test_evaluate_tracks_inputs_and_results_in_order(

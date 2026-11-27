@@ -12,7 +12,7 @@ from sklearn.datasets import make_classification
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
-from covid.common.feature import TARGET
+from covid_common.feature import TARGET
 
 
 @pytest.fixture(autouse=True)

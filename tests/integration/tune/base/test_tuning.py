@@ -1,7 +1,7 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from covid.tune import TuningSpec, tune
+from covid_tuning import TuningSpec, tune
 from tests.integration.tune.base.conftest import assert_mocks_called, assert_result
 
 
@@ -16,7 +16,7 @@ def test_tune_orchestrates_successfully() -> None:
     expected_result = MagicMock()
 
     with patch(
-        "covid.tune.search.tuning._tune", return_value=expected_result
+        "covid_tuning.search.tuning._tune", return_value=expected_result
     ) as mock_tune:
         result = tune(spec, tracker)
 

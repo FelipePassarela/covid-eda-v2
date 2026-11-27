@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 import pandas as pd
 import pytest
 
-from covid.eval.context import EvaluationContext
-from covid.eval.evaluate import _evaluate_pipeline
+from covid_model.eval.context import EvaluationContext
+from covid_model.eval.evaluate import _evaluate_pipeline
 
 
 def test_evaluation_preserves_indices(

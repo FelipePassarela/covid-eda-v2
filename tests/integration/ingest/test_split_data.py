@@ -3,9 +3,9 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from covid.common import constants
-from covid.common.feature import ID, TARGET
-from covid.ingest.split_data import split_data
+from covid_common import constants
+from covid_common.feature import ID, TARGET
+from covid_common.ingest.split_data import split_data
 
 
 def read_split(output_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:

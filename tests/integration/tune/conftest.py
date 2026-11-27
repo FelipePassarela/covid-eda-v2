@@ -2,16 +2,15 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-from hydra import compose, initialize_config_dir
+from hydra import compose, initialize_config_module
 from imblearn.pipeline import Pipeline
 from omegaconf import DictConfig
 from optuna.distributions import CategoricalDistribution
 from sklearn.dummy import DummyClassifier
 from sklearn.model_selection import RepeatedStratifiedKFold
 
-from covid.common.constants import RANDOM_STATE
-from covid.common.paths import CONF_DIR
-from covid.tune import TuningSpec
+from covid_common.constants import RANDOM_STATE
+from covid_tuning import TuningSpec
 
 
 @pytest.fixture()
@@ -58,7 +57,7 @@ def nested_tuning_config(data_path: Path) -> DictConfig:
 def _compose_small_config(
     config_name: str, data_path: Path, overrides: list[str]
 ) -> DictConfig:
-    with initialize_config_dir(config_dir=str(CONF_DIR), version_base=None):
+    with initialize_config_module(config_module="covid_tuning.conf", version_base=None):
         config = compose(
             config_name=config_name,
             overrides=[

@@ -55,7 +55,7 @@ uv run tune dataset=interim search=xgboost-selectk search.n_searches=3 search.n_
 uv run eval-tune dataset=interim search=xgboost-selectk search.n_searches=3 outer_cv.n_repeats=1 outer_cv.n_jobs=1
 ```
 
-O W&B registra os melhores parâmetros da busca e as métricas por fold externo da avaliação aninhada. Para aplicar os parâmetros escolhidos ao treinamento final, configure o pipeline usado por `train` em [src/covid/conf/pipeline/](src/covid/conf/pipeline/). As opções de busca estão em [src/covid/conf/search/](src/covid/conf/search/). Os comandos `tune`, `eval-tune` e `train` usam Hydra e aceitam `--cfg job` para inspecionar a configuração e `wandb.group=<nome>` para agrupar execuções.
+O W&B registra os melhores parâmetros da busca e as métricas por fold externo da avaliação aninhada. Para aplicar os parâmetros escolhidos ao treinamento final, configure o pipeline usado por `train` em [packages/common/src/covid_common/conf/pipeline/](packages/common/src/covid_common/conf/pipeline/). As opções de busca estão em [packages/tuning/src/covid_tuning/conf/search/](packages/tuning/src/covid_tuning/conf/search/). Os comandos `tune`, `eval-tune` e `train` usam Hydra e aceitam `--cfg job` para inspecionar a configuração e `wandb.group=<nome>` para agrupar execuções.
 
 Para comparar modelos, salve a tabela `result/outer_cv_report` de cada modelo como CSV, com uma linha por fold externo e uma coluna para a métrica desejada. No modo offline, os campos `columns` e `data` da tabela ficam nos arquivos `outer_cv_report_*.table.json` em `wandb/offline-run-*/files/media/table/result/`.
 
@@ -67,7 +67,7 @@ uv run boxplot reports/cv/xgboost.csv reports/cv/logistic-regression.csv --metri
 
 ## 📓 Notebooks
 
-Abra os notebooks no Jupyter ou em um editor compatível e selecione o kernel Python da `.venv`. A maioria das análises usa a partição de treino gerada por `split`.
+Instale as dependências dos notebooks com `uv sync --locked --group notebooks`. Abra os notebooks no Jupyter ou em um editor compatível e selecione o kernel Python da `.venv`. A maioria das análises usa a partição de treino gerada por `split`.
 
 | Notebook | Conteúdo |
 | --- | --- |
@@ -81,7 +81,17 @@ Abra os notebooks no Jupyter ou em um editor compatível e selecione o kernel Py
 
 ## 🛠️ Desenvolvimento
 
-- [src/covid/](src/covid/) contém a implementação em Python e as configurações Hydra.
+Os membros do workspace compartilham o `uv.lock` da raiz.
+
+| Pacote | Responsabilidade |
+| --- | --- |
+| [`covid-common`](packages/common/) | `split`, preparação de dados e pipelines compartilhados. |
+| [`covid-eda`](packages/eda/) | Qualidade dos dados, análises univariada e bivariada e seleção por q-value. |
+| [`covid-tuning`](packages/tuning/) | `tune`, `eval-tune` e `boxplot`. |
+| [`covid-model`](packages/model/) | `train`, `eval` e `explain`. |
+
+`covid-tuning` e `covid-model` dependem de `covid-common`. Para selecionar um pacote em particular, use `uv run --package covid-tuning tune --cfg job` ou `uv run --package covid-model train --cfg job`. A análise exploratória pode ser instalada separadamente com `uv sync --locked --package covid-eda`.
+
 - [tests/](tests/) reúne testes unitários e de integração.
 - [docs/](docs/) contém diagramas PlantUML da análise exploratória, da busca, da avaliação aninhada e da interpretação.
 

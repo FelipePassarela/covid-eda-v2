@@ -4,12 +4,12 @@ from omegaconf import DictConfig
 from optuna_integration import OptunaSearchCV
 from sklearn.model_selection import cross_validate
 
-from covid.tune import tune
-from covid.tune.eval import evaluate_tuning
-from covid.tune.eval.tuning_evaluation_spec_factory import (
+from covid_tuning import tune
+from covid_tuning.eval import evaluate_tuning
+from covid_tuning.eval.tuning_evaluation_spec_factory import (
     tuning_evaluation_spec_from_config,
 )
-from covid.tune.search.tuning_spec_factory import tuning_spec_from_config
+from covid_tuning.search.tuning_spec_factory import tuning_spec_from_config
 
 
 def test_tune_applies_configured_parallelism(
@@ -18,7 +18,7 @@ def test_tune_applies_configured_parallelism(
     spec = tuning_spec_from_config(standalone_tuning_config)
 
     with patch(
-        "covid.tune.search.tuning.OptunaSearchCV", wraps=OptunaSearchCV
+        "covid_tuning.search.tuning.OptunaSearchCV", wraps=OptunaSearchCV
     ) as optuna_search:
         tune(spec, tracker=Mock())
 
@@ -32,7 +32,7 @@ def test_eval_tune_applies_configured_parallelism(
     evaluation_spec = tuning_evaluation_spec_from_config(nested_tuning_config)
 
     with patch(
-        "covid.tune.eval.tuning_evaluation.cross_validate", wraps=cross_validate
+        "covid_tuning.eval.tuning_evaluation.cross_validate", wraps=cross_validate
     ) as outer_cv:
         evaluate_tuning(evaluation_spec, tracker=Mock())
 

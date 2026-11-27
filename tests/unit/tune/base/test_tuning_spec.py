@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from sklearn.dummy import DummyClassifier
 from sklearn.model_selection import StratifiedKFold
 
-from covid.tune.search.tuning_spec import TuningSpec
+from covid_tuning.search.tuning_spec import TuningSpec
 
 
 def _write_data_file(tmp_path: Path) -> Path:
