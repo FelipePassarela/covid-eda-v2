@@ -99,6 +99,9 @@ Os membros do workspace compartilham o `uv.lock` da raiz.
 uv run pytest
 uv run ruff check .
 uv run ruff format --check .
+uv run --locked lint-imports
 ```
+
+Os únicos imports permitidos entre membros do workspace são de `covid-eda`, `covid-model` e `covid-tuning` para `covid-common`. O Import Linter verifica essa regra nos pull requests e nos pushes para a branch `main`.
 
 Para habilitar o Ruff antes de cada commit, execute `uv run pre-commit install`.

@@ -16,6 +16,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "import-linter>=2.17",
     "pandas-stubs~=3.0.3",
     "pre-commit>=4.7.0",
     "pyrefly>=0.60.0",
@@ -45,6 +46,22 @@ covid-tuning = { workspace = true }
 known-first-party = ["covid_common", "covid_eda", "covid_model", "covid_tuning"]
 # W&B creates a local wandb/ directory for run artifacts.
 known-third-party = ["wandb"]
+
+[tool.importlinter]
+root_packages = ["covid_common", "covid_eda", "covid_model", "covid_tuning"]
+
+[[tool.importlinter.contracts]]
+id = "common-boundary"
+name = "Common does not import other workspace packages"
+type = "forbidden"
+source_modules = ["covid_common"]
+forbidden_modules = ["covid_eda", "covid_model", "covid_tuning"]
+
+[[tool.importlinter.contracts]]
+id = "independent-packages"
+name = "EDA, modeling, and tuning are independent"
+type = "independence"
+modules = ["covid_eda", "covid_model", "covid_tuning"]
 
 [tool.pyrefly]
 search-path = [
