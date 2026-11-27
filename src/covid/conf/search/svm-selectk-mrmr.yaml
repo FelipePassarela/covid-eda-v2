@@ -1,0 +1,9 @@
+defaults:
+  - /search/common@_here_: default
+  - /pipeline: svm
+  - param_distributions/classifier@param_distributions: svm
+  - param_distributions/selector@param_distributions: selectk
+  - override /pipeline/preprocessor: linear-selectk-mrmr
+  - _self_
+
+n_searches: 100

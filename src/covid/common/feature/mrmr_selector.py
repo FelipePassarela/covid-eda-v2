@@ -7,14 +7,21 @@ from sklearn.utils.validation import check_is_fitted
 
 
 class MRMRSelector(BaseEstimator, TransformerMixin):
-    def __init__(self, k: int = 50, n_jobs: int = 1) -> None:
+    def __init__(
+        self, k: int = 50, n_jobs: int = 1, show_progress: bool = True
+    ) -> None:
+        self.show_progress = show_progress
         self.n_jobs = n_jobs
         self.selected_features_ = None
         self.k = k
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> Self:
         self.selected_features_ = mrmr_classif(
-            X=X, y=y, K=self.k, n_jobs=self.n_jobs, show_progress=True
+            X=X,
+            y=y,
+            K=self.k,
+            n_jobs=self.n_jobs,
+            show_progress=self.show_progress,
         )
         return self
 
