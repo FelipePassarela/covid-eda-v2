@@ -73,6 +73,8 @@ search-path = [
 ]
 
 [tool.pytest.ini_options]
+testpaths = ["packages/*/tests"]
+addopts = ["--import-mode=importlib"]
 filterwarnings = [
     'ignore:OptunaSearchCV is experimental.*:optuna.exceptions.ExperimentalWarning',
     'ignore:`optuna\.terminator` module has been deprecated.*:FutureWarning:optuna_integration\.sklearn\.sklearn',

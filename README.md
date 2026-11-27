@@ -92,7 +92,7 @@ Os membros do workspace compartilham o `uv.lock` da raiz.
 
 `covid-tuning` e `covid-model` dependem de `covid-common`. Para selecionar um pacote em particular, use `uv run --package covid-tuning tune --cfg job` ou `uv run --package covid-model train --cfg job`. A análise exploratória pode ser instalada separadamente com `uv sync --locked --package covid-eda`.
 
-- [tests/](tests/) reúne testes unitários e de integração.
+- Cada pacote mantém os próprios testes em `packages/<pacote>/tests/`. Use `uv run pytest packages/model/tests` para rodar só os testes de modelagem.
 - [docs/](docs/) contém diagramas PlantUML da análise exploratória, da busca, da avaliação aninhada e da interpretação.
 
 ```bash
