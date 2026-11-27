@@ -14,4 +14,4 @@ selector__estimator__n_estimators:
 selector__max_features:
   _target_: optuna.distributions.IntDistribution
   low: 10
-  high: 25
+  high: 50
