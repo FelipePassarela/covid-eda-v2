@@ -1,6 +1,6 @@
 import typer
 
-from covid_common.ingest.split_data import split_data
+from covid_common.data.prepare import prepare_train_test_split
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -10,4 +10,6 @@ def _common() -> None:
     """Prepare datasets for the COVID-EDA workflows."""
 
 
-app.command("split", help="Split the dataset into training and test sets.")(split_data)
+app.command("split", help="Split the dataset into training and test sets.")(
+    prepare_train_test_split
+)

@@ -3,11 +3,11 @@ from pathlib import Path
 from sklearn.model_selection import train_test_split
 
 from covid_common import constants, paths
-from covid_common.data import load_data, save_data
+from covid_common.data.io import load_data, save_data
 from covid_common.feature import TARGET
 
 
-def split_data(
+def prepare_train_test_split(
     data_path: Path = paths.RAW_DATA_PATH,
     output_dir: Path = paths.INTERIM_DATA_DIR,
     test_size: float = 0.2,

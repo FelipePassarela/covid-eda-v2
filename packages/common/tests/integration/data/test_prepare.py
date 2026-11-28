@@ -4,8 +4,8 @@ import pandas as pd
 import pytest
 
 from covid_common import constants
+from covid_common.data.prepare import prepare_train_test_split
 from covid_common.feature import ID, TARGET
-from covid_common.ingest.split_data import split_data
 
 
 def read_split(output_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -25,7 +25,7 @@ def test_split_writes_stratified_partitions_without_losing_or_duplicating_rows(
 ) -> None:
     output_dir = tmp_path / "new" / "splits"
 
-    split_data(data_path, output_dir, test_size=test_size)
+    prepare_train_test_split(data_path, output_dir, test_size=test_size)
 
     train, test = read_split(output_dir)
     assert len(train) == len(source_data) - expected_test_rows
@@ -46,8 +46,10 @@ def test_split_default_seed_matches_explicit_seed(
     default_dir = tmp_path / "default"
     explicit_dir = tmp_path / "explicit"
 
-    split_data(data_path, default_dir)
-    split_data(data_path, explicit_dir, random_state=constants.RANDOM_STATE)
+    prepare_train_test_split(data_path, default_dir)
+    prepare_train_test_split(
+        data_path, explicit_dir, random_state=constants.RANDOM_STATE
+    )
 
     default_train, default_test = read_split(default_dir)
     explicit_train, explicit_test = read_split(explicit_dir)
@@ -61,8 +63,8 @@ def test_split_is_reproducible_with_a_custom_seed(
     first_dir = tmp_path / "first"
     second_dir = tmp_path / "second"
 
-    split_data(data_path, first_dir, random_state=17)
-    split_data(data_path, second_dir, random_state=17)
+    prepare_train_test_split(data_path, first_dir, random_state=17)
+    prepare_train_test_split(data_path, second_dir, random_state=17)
 
     first_train, first_test = read_split(first_dir)
     second_train, second_test = read_split(second_dir)
@@ -76,8 +78,8 @@ def test_split_changes_partition_with_a_different_seed(
     first_dir = tmp_path / "first"
     second_dir = tmp_path / "second"
 
-    split_data(data_path, first_dir, random_state=17)
-    split_data(data_path, second_dir, random_state=42)
+    prepare_train_test_split(data_path, first_dir, random_state=17)
+    prepare_train_test_split(data_path, second_dir, random_state=42)
 
     first_train, first_test = read_split(first_dir)
     second_train, second_test = read_split(second_dir)
@@ -92,7 +94,7 @@ def test_split_rejects_invalid_test_sizes_without_writing_files(
     output_dir = tmp_path / "splits"
 
     with pytest.raises(ValueError):
-        split_data(data_path, output_dir, test_size=test_size)
+        prepare_train_test_split(data_path, output_dir, test_size=test_size)
 
     assert not output_dir.exists()
 
@@ -104,7 +106,7 @@ def test_split_rejects_data_without_target(
     output_dir = tmp_path / "splits"
 
     with pytest.raises(KeyError, match=TARGET):
-        split_data(data_path, output_dir)
+        prepare_train_test_split(data_path, output_dir)
 
     assert not output_dir.exists()
 
@@ -117,7 +119,7 @@ def test_split_rejects_a_class_with_only_one_sample(
     output_dir = tmp_path / "splits"
 
     with pytest.raises(ValueError, match="least populated class"):
-        split_data(data_path, output_dir)
+        prepare_train_test_split(data_path, output_dir)
 
     assert not output_dir.exists()
 
@@ -126,6 +128,6 @@ def test_split_propagates_missing_file_errors(tmp_path: Path) -> None:
     output_dir = tmp_path / "splits"
 
     with pytest.raises(FileNotFoundError):
-        split_data(tmp_path / "missing.csv", output_dir)
+        prepare_train_test_split(tmp_path / "missing.csv", output_dir)
 
     assert not output_dir.exists()
