@@ -1,70 +1,80 @@
 [project]
-name = "covid"
+name = "covid-eda-v2"
 version = "0.1.0"
-description = "Add your description here"
+description = "Workspace for exploratory analysis and classification of long COVID"
 readme = "README.md"
 authors = [
     { name = "FelipePassarela", email = "126916744+FelipePassarela@users.noreply.github.com" }
 ]
 requires-python = "==3.13.*"
 dependencies = [
-    "catboost>=1.2.10",
-    "hydra-core>=1.3.4",
-    "imbalanced-learn>=0.14.2",
-    "ipykernel>=7.3.0",
-    "joblib>=1.5.3",
-    "lightgbm>=4.7.0",
-    "loguru>=0.7.3",
-    "matplotlib>=3.11.0",
-    "missingno>=0.5.2",
-    "mrmr-selection>=0.2.8",
-    "numpy>=2.4.6",
-    "omegaconf>=2.3.1",
-    "optuna>=5.0.0",
-    "optuna-integration[sklearn]>=5.0.0",
-    "pandas>=3.0.3",
-    "pandas-stubs~=3.0.3",
-    "pydantic>=2.13.4",
-    "pyrefly>=0.60.0",
-    "pyyml>=0.0.2",
-    "ruff>=0.15.22",
-    "scikit-learn>=1.9.0",
-    "scipy>=1.17.1",
-    "scipy-stubs~=1.18.0",
-    "seaborn>=0.13.2",
-    "shap>=0.52.0",
-    "statsmodels>=0.14.6",
-    "tqdm>=4.68.3",
-    "typer>=0.26.7",
-    "umap-learn>=0.5.12",
-    "wandb>=0.28.1",
-    "xgboost>=3.3.0",
+    "covid-common",
+    "covid-eda",
+    "covid-model",
+    "covid-tuning",
 ]
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
+    "import-linter>=2.17",
+    "pandas-stubs~=3.0.3",
     "pre-commit>=4.7.0",
+    "pyrefly>=0.60.0",
     "pytest>=9.1.0",
+    "ruff>=0.15.22",
+    "scipy-stubs~=1.18.0",
+]
+notebooks = [
+    "ipykernel>=7.3.0",
+    "missingno>=0.5.2",
+    "umap-learn>=0.5.12",
 ]
 
-[project.scripts]
-split = "covid.ingest.split_data:main"
-tune = "covid.tune.search.cli:main"
-eval-tune = "covid.tune.eval.cli:main"
-boxplot = "covid.tune.eval.visualization.cli:main"
-train = "covid.train.cli:main"
-eval = "covid.eval.cli:main"
-explain = "covid.explain.cli:main"
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["packages/common", "packages/eda", "packages/model", "packages/tuning"]
+
+[tool.uv.sources]
+covid-common = { workspace = true }
+covid-eda = { workspace = true }
+covid-model = { workspace = true }
+covid-tuning = { workspace = true }
 
 [tool.ruff.lint.isort]
+known-first-party = ["covid_common", "covid_eda", "covid_model", "covid_tuning"]
 # W&B creates a local wandb/ directory for run artifacts.
 known-third-party = ["wandb"]
 
+[tool.importlinter]
+root_packages = ["covid_common", "covid_eda", "covid_model", "covid_tuning"]
+
+[[tool.importlinter.contracts]]
+id = "common-boundary"
+name = "Common does not import other workspace packages"
+type = "forbidden"
+source_modules = ["covid_common"]
+forbidden_modules = ["covid_eda", "covid_model", "covid_tuning"]
+
+[[tool.importlinter.contracts]]
+id = "independent-packages"
+name = "EDA, modeling, and tuning are independent"
+type = "independence"
+modules = ["covid_eda", "covid_model", "covid_tuning"]
+
+[tool.pyrefly]
+search-path = [
+    ".",
+    "packages/common/src",
+    "packages/eda/src",
+    "packages/model/src",
+    "packages/tuning/src",
+]
+
 [tool.pytest.ini_options]
+testpaths = ["packages/*/tests"]
+addopts = ["--import-mode=importlib"]
 filterwarnings = [
     'ignore:OptunaSearchCV is experimental.*:optuna.exceptions.ExperimentalWarning',
     'ignore:`optuna\.terminator` module has been deprecated.*:FutureWarning:optuna_integration\.sklearn\.sklearn',

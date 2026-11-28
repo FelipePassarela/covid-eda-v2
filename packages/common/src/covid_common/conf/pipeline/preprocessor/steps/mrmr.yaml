@@ -1,0 +1,3 @@
+_target_: covid_common.feature.MRMRSelector
+k: 50
+show_progress: false
