@@ -1,15 +1,10 @@
 from pathlib import Path
 
-import typer
 from sklearn.model_selection import train_test_split
 
 from covid_common import constants, paths
 from covid_common.data import load_data, save_data
 from covid_common.feature import TARGET
-
-
-def main() -> None:
-    typer.run(split_data)
 
 
 def split_data(
@@ -26,7 +21,3 @@ def split_data(
 
     save_data(train, output_dir / "train.csv")
     save_data(test, output_dir / "test.csv")
-
-
-if __name__ == "__main__":
-    main()

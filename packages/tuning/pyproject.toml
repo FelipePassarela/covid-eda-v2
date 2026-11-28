@@ -21,9 +21,7 @@ dependencies = [
 ]
 
 [project.scripts]
-tune = "covid_tuning.search.cli:main"
-eval-tune = "covid_tuning.eval.cli:main"
-boxplot = "covid_tuning.eval.visualization.cli:main"
+covid-tuning = "covid_tuning.cli:app"
 
 [build-system]
 requires = ["hatchling"]

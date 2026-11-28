@@ -19,9 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-train = "covid_model.train.cli:main"
-eval = "covid_model.eval.cli:main"
-explain = "covid_model.explain.cli:main"
+covid-model = "covid_model.cli:app"
 
 [build-system]
 requires = ["hatchling"]

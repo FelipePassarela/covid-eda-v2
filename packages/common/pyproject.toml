@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [project.scripts]
-split = "covid_common.ingest.split_data:main"
+covid-common = "covid_common.cli:app"
 
 [build-system]
 requires = ["hatchling"]

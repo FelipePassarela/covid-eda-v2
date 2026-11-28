@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 from unittest.mock import patch
 
@@ -7,8 +6,9 @@ import pytest
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.image import imread
+from typer.testing import CliRunner
 
-from covid_tuning.eval.visualization.cli import main
+from covid_tuning.cli import app
 from covid_tuning.eval.visualization.io import create_boxplot_data
 
 
@@ -45,20 +45,21 @@ def test_boxplot_command_saves_labeled_png(
     metric_args: list[str],
     metric_label: str,
     tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
     existing_figures: set[int],
 ) -> None:
     output_path = tmp_path / "reports" / "boxplot.png"
-    _set_boxplot_argv(monkeypatch, cv_results_paths, output_path, metric_args)
+    arguments = [
+        "boxplot",
+        *(str(path) for path in cv_results_paths),
+        "--output-path",
+        str(output_path),
+        *metric_args,
+    ]
 
-    with (
-        plt.rc_context(),
-        patch.object(plt, "show"),
-        pytest.raises(SystemExit) as exit_info,
-    ):
-        main()
+    with plt.rc_context(), patch.object(plt, "show"):
+        result = CliRunner().invoke(app, arguments, prog_name="covid-tuning")
 
-    assert exit_info.value.code == 0
+    assert result.exit_code == 0, result.output
 
     axes = _new_axes(existing_figures)
     assert axes.has_data()
@@ -89,22 +90,6 @@ def cv_results_paths(tmp_path: Path) -> list[Path]:
     ).to_csv(dummy_path, index=False)
 
     return [svm_path, dummy_path]
-
-
-def _set_boxplot_argv(
-    monkeypatch: pytest.MonkeyPatch,
-    cv_results_paths: list[Path],
-    output_path: Path,
-    metric_args: list[str],
-) -> None:
-    argv = [
-        "boxplot",
-        *(str(path) for path in cv_results_paths),
-        "--output-path",
-        str(output_path),
-        *metric_args,
-    ]
-    monkeypatch.setattr(sys, "argv", argv)
 
 
 def _new_axes(existing_figures: set[int]) -> Axes:
